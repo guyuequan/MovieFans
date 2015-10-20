@@ -1,0 +1,140 @@
+//
+//  PrefixHeader.pch
+//  MovieFans
+//
+//  Created by Leo Gao on 2/21/15.
+//  Copyright (c) 2015 LeoCode. All rights reserved.
+//
+
+#ifndef MovieFans_PrefixHeader_pch
+#define MovieFans_PrefixHeader_pch
+
+#import <QuartzCore/QuartzCore.h>
+#import "SVProgressHUD.h"
+#import "UIImageView+WebCache.h"
+#import "AppDelegate.h"
+#import "UIImage+Fit.h"
+#import "ThemeManager.h"
+#import "AFMInfoBanner.h"
+#import "SVPullToRefresh.h"
+#import <Masonry/Masonry.h>
+#import "Constants.h"
+#import "UIView+Toast.h"
+#import "MutiLineLabel.h"
+#import "InsetsLabel.h"
+#import "UIColor+expanded.h"
+#import "NSString+Common.h"
+#import "UIImage+Common.h"
+#import "UIView+Common.h"
+#import "NSMutableAttributedString+Common.h"
+#import "BaseViewController.h"
+#import "MyNavigationViewController.h"
+#import "ApiUrl.h"
+#import "NetworkManager.h"
+#import "Mantle.h"
+#import "UIImage+BlurredFrame.h"
+#import "YTKKeyValueStore.h"
+#import "DBUtil.h"
+#import "MTLModel+MTLNullableScalar.h"
+#import "TButton.h"
+#import "TLabel.h"
+#import "TSegmentedControl.h"
+#import "ThemeManager.h"
+#import "MobClick.h"
+
+//豆瓣apikey
+#define kApiKey4Douban @""
+
+//友盟key
+#define kApiKey4UMeng @""
+
+
+#define kAppDetailURL   @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=970057582"
+#define kAppReviewURL @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=970057582"
+#define kStoreAppId  @"970057582"
+
+#define kDefaultTipDuration 2
+
+//控件高
+#define kTabBarHeight self.tabBarController.tabBar.bounds.size.height
+#define kNavigationBarHeight self.navigationController.navigationBar.bounds.size.height
+#define kStateBarHeight [UIApplication sharedApplication].statusBarFrame.size.height
+
+//view高/宽
+#define kViewHeight self.view.frame.size.height
+#define kViewWidth self.view.frame.size.width
+//屏幕高/宽
+#define kScreenHeight [[UIScreen mainScreen]bounds].size.height
+#define kScreenWidth [[UIScreen mainScreen]bounds].size.width
+
+//系统版本
+#define kSystemVersion [[UIDevice currentDevice]systemVersion].floatValue
+//app版本
+#define kAppVersion [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]
+//应用名称
+#define kAppName [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString*)kCFBundleNameKey]
+
+#define kKeyWindow [[UIApplication sharedApplication] keyWindow]
+#define isPad (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+
+//获取当前语言
+#define kCurrentLanguage ([[NSLocale preferredLanguages] objectAtIndex:0])
+//读取本地图片
+#define __LOADIMAGE(file,ext) [UIImage imageWithContentsOfFile:[[NSBundle mainBundle]pathForResource:file ofType:ext]]
+//定义UIImage对象
+#define __IMAGE(A) [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:A ofType:nil]]
+//定义UIImage对象
+#define __ImageNamed(_pointer) [UIImage imageNamed:[UIUtil imageName:_pointer]]
+
+//由角度获取弧度 有弧度获取角度
+#define degreesToRadian(x) (M_PI * (x) / 180.0)
+#define radianToDegrees(radian) (radian*180.0)/(M_PI)
+
+#define __PrintFrame(frame) NSLog(@"Frame:(%f,%f,%f,%f)",frame.origin.x,frame.origin.y,frame.size.width,frame.size.height)
+
+//----------------------颜色类---------------------------
+// rgb颜色转换（16进制->10进制）
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+
+//带有RGBA的颜色设置
+#define __ColorWithRGBA(R, G, B, A) [UIColor colorWithRed:R/255.0 green:G/255.0 blue:B/255.0 alpha:A]
+
+#define __ColorWithRGB(r,g,b) __ColorWithRGBA(r,g,b,1.0f)
+
+//清除背景色
+#define kClearColor [UIColor clearColor]
+
+
+#pragma mark - color functions
+#define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:1]
+#define RGBACOLOR(r,g,b,a) [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:(a)]
+
+
+
+//-------------------打印日志-------------------------
+//DEBUG  模式下打印日志,当前行
+#ifdef DEBUG
+#   define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#else
+#   define DLog(...)
+#endif
+
+
+//重写NSLog,Debug模式下打印日志和当前行数
+#if DEBUG
+#define NSLog(FORMAT, ...) fprintf(stderr,"\nfunction:%s line:%d content:%s\n", __FUNCTION__, __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define NSLog(FORMAT, ...) nil
+#endif
+
+//DEBUG  模式下打印日志,当前行 并弹出一个警告
+#ifdef DEBUG
+#   define ULog(fmt, ...)  { UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%s\n [Line %d] ", __PRETTY_FUNCTION__, __LINE__] message:[NSString stringWithFormat:fmt, ##__VA_ARGS__]  delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil]; [alert show]; }
+#else
+#   define ULog(...)
+#endif
+
+#define DebugLog(s, ...) NSLog(@"%s(%d): %@", __FUNCTION__, __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__])
+
+#define __AlertTip(_S_, ...)     [[[UIAlertView alloc] initWithTitle:@"提示" message:[NSString stringWithFormat:(_S_), ##__VA_ARGS__] delegate:nil cancelButtonTitle:@"知道了" otherButtonTitles:nil] show]
+#endif

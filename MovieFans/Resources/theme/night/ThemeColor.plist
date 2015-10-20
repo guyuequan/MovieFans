@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>theme_color_view_background</key>
+	<string>0x333333</string>
+	<key>theme_color_label_dark</key>
+	<string>0xf1f1f1</string>
+	<key>theme_color_label_light</key>
+	<string>0xeeeeee</string>
+	<key>theme_color_cell_title</key>
+	<string>0xf1f1f1</string>
+	<key>theme_color_cell_content</key>
+	<string>0xeeeeee</string>
+	<key>theme_color_cell_background_dark</key>
+	<string>0x444444</string>
+	<key>theme_color_cell_background_light</key>
+	<string>0x555555</string>
+	<key>theme_color_button_text</key>
+	<string>0xeeeeee</string>
+	<key>theme_color_button_background</key>
+	<string>0x333333</string>
+	<key>theme_color_menu_background</key>
+	<string>0x444444</string>
+	<key>theme_color_navigation_bar_background</key>
+	<string>0x333333</string>
+	<key>theme_color_navigation_item_tint</key>
+	<string>0xeeeeee</string>
+	<key>theme_color_tab_bar_tint</key>
+	<string>0xeeeeee</string>
+	<key>theme_color_tab_bar_background</key>
+	<string>0x333333</string>
+	<key>theme_color_segment_background_selected</key>
+	<string>0x333333</string>
+	<key>theme_color_segment_text_selected</key>
+	<string>0x000000</string>
+	<key>theme_color_segment_text_normal</key>
+	<string>0xf1f1f1</string>
+</dict>
+</plist>

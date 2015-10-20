@@ -1,0 +1,32 @@
+//
+//  Constants.h
+//  MovieFans
+//
+//  Created by Leo Gao on 2/22/15.
+//  Copyright (c) 2015 LeoCode. All rights reserved.
+//
+
+//缓存时间key
+FOUNDATION_EXPORT NSString *const KEY_CACHE_DATE;
+
+//缓存时间key
+FOUNDATION_EXPORT NSString *const KEY_PASTEBOARD_SWITCH;
+
+//是否显示所有标签
+FOUNDATION_EXPORT NSString *const KEY_IF_SHOW_ALL_TAG;
+
+//我的收藏数据库、表名
+FOUNDATION_EXPORT NSString *const DB_NAME;
+FOUNDATION_EXPORT NSString *const TABLE_MOVIE;
+FOUNDATION_EXPORT NSString *const TABLE_REVIEW;
+FOUNDATION_EXPORT NSString *const TABLE_CELEBRITY;
+
+//搜素历史键值
+FOUNDATION_EXPORT NSString *const KEY_SEARCH_HISTORY;
+
+//更改收藏数据通知
+FOUNDATION_EXPORT NSString *const NOTICE_COLLECTION_DATA_CHANGED;
+
+//编辑收藏夹通知
+FOUNDATION_EXPORT NSString *const NOTICE_COLLECTION_DATA_BEGIN_EDIT;
+FOUNDATION_EXPORT NSString *const NOTICE_COLLECTION_DATA_END_EDIT;
