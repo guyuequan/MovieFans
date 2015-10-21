@@ -77,7 +77,7 @@
         [[NSUserDefaults standardUserDefaults]setValue:ifshowAllTag forKey:KEY_IF_SHOW_ALL_TAG];
     }
     if(about){
-        [[NSUserDefaults standardUserDefaults]setValue:about forKey:KEY_IF_SHOW_ALL_TAG];
+        [[NSUserDefaults standardUserDefaults]setValue:about forKey:KEY_ABOUT_TEXT];
     }
     [[NSUserDefaults standardUserDefaults]synchronize];
     
