@@ -56,17 +56,9 @@
     RankListViewController *vc = [self.childViewControllers firstObject];
     vc.view.frame = self.contentScrollView.bounds;
     [self.contentScrollView addSubview:vc.view];
-    //设置第一个menulabel
-//    MenuLabel *label = [self.menuScrollView.subviews firstObject];
+    //设置第一个menu选中高亮
     MenuLabel *label = [self.menuLabels firstObject];
     label.scale = 1.0;
-    
-}
-
-#pragma mark - Public
-#pragma mark - inherit
-- (void)applyTheme{
-    [super applyTheme];
 }
 #pragma mark - Private
 - (void)setupRightBarItem{
@@ -78,15 +70,12 @@
 }
 
 - (void)settingBtnClicked:(UIButton *)sender{
-   
     SettingViewController *settingVC = [[SettingViewController alloc]init];
     settingVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:settingVC animated:YES];
-    
 }
 /** 添加子控制器 */
-- (void)addContentViewControllers
-{
+- (void)addContentViewControllers{
     for (int i=0 ; i<self.menuArray.count ;i++){
         RankListViewController *vc = [[RankListViewController alloc]init];
         vc.urlPath = self.requestPathArray[i];
@@ -95,8 +84,7 @@
     self.contentScrollView.contentSize = CGSizeMake(kViewWidth*self.menuArray.count,0.f);
 }
 /** 添加菜单栏 */
-- (void)addMenus;
-{
+- (void)addMenus{
     CGFloat horMargin = 30.f;
     CGFloat lblWidth;
     CGFloat originX = 10.f;
@@ -127,8 +115,7 @@
     self.menuScrollView.contentSize = CGSizeMake(originX+10.f,kMenuHeight);
 }
 
-- (void)menuClick:(UITapGestureRecognizer *)recognizer
-{
+- (void)menuClick:(UITapGestureRecognizer *)recognizer{
     MenuLabel *titlelabel = (MenuLabel *)recognizer.view;
     CGFloat offsetX = titlelabel.tag * self.contentScrollView.frame.size.width;
     CGFloat offsetY = self.contentScrollView.contentOffset.y;
@@ -141,8 +128,7 @@
 
 #pragma mark -UIScrollViewDelegate
 /** 滚动结束后调用（代码导致） */
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
-{
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView{
     // 获得索引
     NSUInteger index = scrollView.contentOffset.x / self.contentScrollView.frame.size.width;
     
@@ -178,14 +164,12 @@
 }
 
 /** 滚动结束（手势导致） */
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
     [self scrollViewDidEndScrollingAnimation:scrollView];
 }
 
 /** 正在滚动 */
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     // 取出绝对值 避免最左边往右拉时形变超过1
     CGFloat value = ABS(scrollView.contentOffset.x / scrollView.frame.size.width);
     NSUInteger leftIndex = (int)value;
@@ -193,7 +177,6 @@
     CGFloat scaleRight = value - leftIndex;
     
     CGFloat scaleLeft = 1 - scaleRight;
-//    MenuLabel *labelLeft = self.menuScrollView.subviews[leftIndex];
     MenuLabel *labelLeft = self.menuLabels[leftIndex];
     labelLeft.scale = scaleLeft;
     // 考虑到最后一个板块，如果右边已经没有板块了 就不在下面赋值scale了

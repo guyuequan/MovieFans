@@ -92,10 +92,6 @@
     }
 }
 
-
-#pragma mark - Public
-
-
 #pragma mark - Protocol
 #pragma mark  UITableViewDataSource/UITableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -110,7 +106,6 @@
     return  height;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     CommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"comment_cell"];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.comment = self.commentsArray[indexPath.row];

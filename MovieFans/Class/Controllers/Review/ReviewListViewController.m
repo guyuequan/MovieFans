@@ -26,6 +26,7 @@
     _startNum = 0;
     _pageCount = 20;
     _noMoreFlag = NO;
+    
     [self.tableView registerClass:[ReviewCell class] forCellReuseIdentifier:@"review_Cell"];
     self.tableView.tableFooterView = [UIView new];
     self.tableView.showsVerticalScrollIndicator = NO;
@@ -55,7 +56,6 @@
         [self.view.window makeToast:@"已经没有更多数据啦!" duration:2.f position:CSToastPositionBottom];
         return;
     }
-
     //首次加载，不是加载更多
     if(!moreFlag){
         [SVProgressHUD showWithStatus:@""];
@@ -92,11 +92,6 @@
         }];
     }
 }
-
-
-#pragma mark - Public
-
-
 #pragma mark - Protocol
 #pragma mark  UITableViewDataSource/UITableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

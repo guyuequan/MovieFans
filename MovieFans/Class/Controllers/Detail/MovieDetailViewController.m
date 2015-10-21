@@ -39,12 +39,12 @@
 @property (nonatomic,strong) TTTAttributedLabel *basicInfoView;//基本信息
 @property (nonatomic,strong) UILabel *abstractView;//简介
 @property (nonatomic,assign) CGFloat abstractViewHeight; //电影简介高度
-@property (nonatomic,assign) BOOL abstractViewHasBeenTapped;//点击过简介cell（查看全部简介）
 
+@property (nonatomic,assign) BOOL abstractViewHasBeenTapped;//点击过简介cell（查看全部简介）
 @property (nonatomic,strong) NSArray *moviePhotos;//详情接口返回的剧照仅显示前4张
 @property (nonatomic,strong) NSArray *comments;//热评
-
 @property (nonatomic,strong) Movie *movieDetail;
+
 @end
 
 @implementation MovieDetailViewController
@@ -74,7 +74,6 @@
     [super viewWillAppear:animated];
   
 }
-#pragma mark - Public
 
 #pragma mark - Private
 - (void)setupSubviews{
@@ -133,9 +132,6 @@
         [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
     }
     
-}
-- (void)shareBtnClicekd:(UIButton *)sender{
-    NSLog(@"分享...");
 }
 -(void)requestData{
     if(!self.movieId){
@@ -546,12 +542,6 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
         moreBtn.themeTextColorNormalKey = THEME_COLOR_BUTTON_TEXT;
         [moreBtn addTarget:self action:@selector(moreBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
         [_footerView addSubview:moreBtn];
-//        [moreBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.top.equalTo(_footerView.mas_top).offset(5.f);
-//            make.height.mas_equalTo(40.f);
-//            make.leading.equalTo(_footerView.mas_leading).offset(10.f);
-//            make.trailing.equalTo(_footerView.mas_trailing).offset(-10.f);
-//        }];
     }
     return _footerView;
 }

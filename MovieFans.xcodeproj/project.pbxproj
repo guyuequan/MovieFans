@@ -82,7 +82,6 @@
 		E198BFA51BB2864A00CEAEA2 /* NSObject+ObjectMap.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF351BB2864900CEAEA2 /* NSObject+ObjectMap.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFA61BB2864A00CEAEA2 /* NSString+Common.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF371BB2864900CEAEA2 /* NSString+Common.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFA71BB2864A00CEAEA2 /* NSURL+Common.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF391BB2864900CEAEA2 /* NSURL+Common.m */; settings = {ASSET_TAGS = (); }; };
-		E198BFA81BB2864A00CEAEA2 /* UIAlertView+common.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF3B1BB2864900CEAEA2 /* UIAlertView+common.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFA91BB2864A00CEAEA2 /* UIColor+expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF3D1BB2864900CEAEA2 /* UIColor+expanded.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFAB1BB2864A00CEAEA2 /* UIImage+Common.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF411BB2864900CEAEA2 /* UIImage+Common.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFAC1BB2864A00CEAEA2 /* UIImage+Fit.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF431BB2864900CEAEA2 /* UIImage+Fit.m */; settings = {ASSET_TAGS = (); }; };
@@ -99,7 +98,6 @@
 		E198BFBC1BB2864A00CEAEA2 /* HeaderDescView.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF6A1BB2864A00CEAEA2 /* HeaderDescView.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFBD1BB2864A00CEAEA2 /* InsetsLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF6C1BB2864A00CEAEA2 /* InsetsLabel.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFBF1BB2864A00CEAEA2 /* MenuLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF701BB2864A00CEAEA2 /* MenuLabel.m */; settings = {ASSET_TAGS = (); }; };
-		E198BFC11BB2864A00CEAEA2 /* MutiLineLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF741BB2864A00CEAEA2 /* MutiLineLabel.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFC21BB2864A00CEAEA2 /* CommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF771BB2864A00CEAEA2 /* CommentCell.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFC31BB2864A00CEAEA2 /* MovieCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF791BB2864A00CEAEA2 /* MovieCell.m */; settings = {ASSET_TAGS = (); }; };
 		E198BFC41BB2864A00CEAEA2 /* ReviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E198BF7B1BB2864A00CEAEA2 /* ReviewCell.m */; settings = {ASSET_TAGS = (); }; };
@@ -244,8 +242,6 @@
 		E198BF371BB2864900CEAEA2 /* NSString+Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Common.m"; sourceTree = "<group>"; };
 		E198BF381BB2864900CEAEA2 /* NSURL+Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Common.h"; sourceTree = "<group>"; };
 		E198BF391BB2864900CEAEA2 /* NSURL+Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Common.m"; sourceTree = "<group>"; };
-		E198BF3A1BB2864900CEAEA2 /* UIAlertView+common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+common.h"; sourceTree = "<group>"; };
-		E198BF3B1BB2864900CEAEA2 /* UIAlertView+common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+common.m"; sourceTree = "<group>"; };
 		E198BF3C1BB2864900CEAEA2 /* UIColor+expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+expanded.h"; sourceTree = "<group>"; };
 		E198BF3D1BB2864900CEAEA2 /* UIColor+expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+expanded.m"; sourceTree = "<group>"; };
 		E198BF401BB2864900CEAEA2 /* UIImage+Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Common.h"; sourceTree = "<group>"; };
@@ -278,8 +274,6 @@
 		E198BF6C1BB2864A00CEAEA2 /* InsetsLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsetsLabel.m; sourceTree = "<group>"; };
 		E198BF6F1BB2864A00CEAEA2 /* MenuLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuLabel.h; sourceTree = "<group>"; };
 		E198BF701BB2864A00CEAEA2 /* MenuLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuLabel.m; sourceTree = "<group>"; };
-		E198BF731BB2864A00CEAEA2 /* MutiLineLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutiLineLabel.h; sourceTree = "<group>"; };
-		E198BF741BB2864A00CEAEA2 /* MutiLineLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MutiLineLabel.m; sourceTree = "<group>"; };
 		E198BF761BB2864A00CEAEA2 /* CommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentCell.h; sourceTree = "<group>"; };
 		E198BF771BB2864A00CEAEA2 /* CommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentCell.m; sourceTree = "<group>"; };
 		E198BF781BB2864A00CEAEA2 /* MovieCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieCell.h; sourceTree = "<group>"; };
@@ -665,8 +659,6 @@
 				E198BF371BB2864900CEAEA2 /* NSString+Common.m */,
 				E198BF381BB2864900CEAEA2 /* NSURL+Common.h */,
 				E198BF391BB2864900CEAEA2 /* NSURL+Common.m */,
-				E198BF3A1BB2864900CEAEA2 /* UIAlertView+common.h */,
-				E198BF3B1BB2864900CEAEA2 /* UIAlertView+common.m */,
 				E198BF3C1BB2864900CEAEA2 /* UIColor+expanded.h */,
 				E198BF3D1BB2864900CEAEA2 /* UIColor+expanded.m */,
 				E198BF401BB2864900CEAEA2 /* UIImage+Common.h */,
@@ -745,8 +737,6 @@
 				E198BF6C1BB2864A00CEAEA2 /* InsetsLabel.m */,
 				E198BF6F1BB2864A00CEAEA2 /* MenuLabel.h */,
 				E198BF701BB2864A00CEAEA2 /* MenuLabel.m */,
-				E198BF731BB2864A00CEAEA2 /* MutiLineLabel.h */,
-				E198BF741BB2864A00CEAEA2 /* MutiLineLabel.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -991,7 +981,6 @@
 				E198BF951BB2864A00CEAEA2 /* SettingViewController.m in Sources */,
 				E198BF9A1BB2864A00CEAEA2 /* MovieSimple.m in Sources */,
 				E198BFBF1BB2864A00CEAEA2 /* MenuLabel.m in Sources */,
-				E198BFC11BB2864A00CEAEA2 /* MutiLineLabel.m in Sources */,
 				E198BF9E1BB2864A00CEAEA2 /* Work.m in Sources */,
 				E198BFA61BB2864A00CEAEA2 /* NSString+Common.m in Sources */,
 				E198BF8E1BB2864A00CEAEA2 /* ReviewDetailViewController.m in Sources */,
@@ -1004,7 +993,6 @@
 				E198BFA71BB2864A00CEAEA2 /* NSURL+Common.m in Sources */,
 				B34C09FA1BD55B8C00C2C062 /* AboutViewController.m in Sources */,
 				E198BFA31BB2864A00CEAEA2 /* NSDictionary+Common.m in Sources */,
-				E198BFA81BB2864A00CEAEA2 /* UIAlertView+common.m in Sources */,
 				E198BFA91BB2864A00CEAEA2 /* UIColor+expanded.m in Sources */,
 				E198BFA51BB2864A00CEAEA2 /* NSObject+ObjectMap.m in Sources */,
 				E1D1A4161BB3CE2F0093DBBD /* TButton.m in Sources */,

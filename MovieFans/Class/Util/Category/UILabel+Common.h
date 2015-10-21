@@ -10,8 +10,8 @@
 
 @interface UILabel (Common)
 
-- (void) setLongString:(NSString *)str withFitWidth:(CGFloat)width;
-- (void) setLongString:(NSString *)str withFitWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight;
-- (void) setLongString:(NSString *)str withVariableWidth:(CGFloat)maxWidth;
+- (void)setLongString:(NSString *)str withFitWidth:(CGFloat)width;
+- (void)setLongString:(NSString *)str withFitWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight;
+- (void)setLongString:(NSString *)str withVariableWidth:(CGFloat)maxWidth;
 
 @end

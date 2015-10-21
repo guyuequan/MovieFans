@@ -20,7 +20,6 @@
 #import <Masonry/Masonry.h>
 #import "Constants.h"
 #import "UIView+Toast.h"
-#import "MutiLineLabel.h"
 #import "InsetsLabel.h"
 #import "UIColor+expanded.h"
 #import "NSString+Common.h"
@@ -47,7 +46,6 @@
 
 //友盟key
 #define kApiKey4UMeng @""
-
 
 #define kAppDetailURL   @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=970057582"
 #define kAppReviewURL @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=970057582"

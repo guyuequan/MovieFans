@@ -24,8 +24,7 @@
 
 @implementation SettingViewController
 #pragma - mark LifeCycle
-- (void)viewDidLoad
-{
+- (void)viewDidLoad{
     [super viewDidLoad];
     self.navigationItem.title = @"程序设置";
     [self setupTableView];
@@ -49,10 +48,6 @@
         make.edges.equalTo(self.view);
     }];
 }
-- (void)applyTheme{
-    [super applyTheme];
-//    self.tableView.backgroundColor = [ThemeManager themeColorWithKey:THEME_COLOR_VIEW_BACKGROUND];
-}
 - (void)refreshCacheInfo{
     [[SDImageCache sharedImageCache] clearMemory];
     float tmpSize = [[SDImageCache sharedImageCache] getSize]/1024.f;
@@ -70,12 +65,6 @@
     [MobClick event:@"UMEVentClickNightSwitch"];
     //取出选中的主题名称
     [ThemeManager shareInstance].themeType = sender.on?ThemeTypeNight:ThemeTypeDefault;
-    
-//    if ([DKNightVersionManager currentThemeVersion] == DKThemeVersionNight) {
-//        [DKNightVersionManager dawnComing];
-//    } else {
-//        [DKNightVersionManager nightFalling];
-//    }
 }
 - (void)sendMail{
     Class mailClass = (NSClassFromString(@"MFMailComposeViewController"));

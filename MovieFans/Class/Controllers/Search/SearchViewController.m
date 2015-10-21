@@ -370,8 +370,8 @@
         _searchBar = [[UISearchBar alloc] init];
         _searchBar.delegate = self;
         _searchBar.placeholder = @"请输入影视名称或关键字...";
-//        _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-//        _searchBar.autocapitalizationType = UIViewAutoresizingNone;
+        _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+        _searchBar.autocapitalizationType = UIViewAutoresizingNone;
     }
     return _searchBar;
 }

@@ -31,6 +31,7 @@
 @property (nonatomic,strong) UIView *footerView;
 @property (nonatomic,strong) UILabel *abstractView;//简介
 @property (nonatomic,assign) CGFloat abstractViewHeight; //电影简介高度
+
 @property (nonatomic,assign) BOOL abstractViewHasBeenTapped;//点击过简介cell（查看全部简介）
 @property (nonatomic,strong) NSArray *photos;//详情接口返回的剧照仅显示前4张
 @property (nonatomic,strong) NSArray *works;//相关作品
@@ -491,12 +492,6 @@
         [moreBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
         [moreBtn addTarget:self action:@selector(moreBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
         [_footerView addSubview:moreBtn];
-//        [moreBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.top.equalTo(_footerView.mas_top).offset(5.f);
-//            make.height.mas_equalTo(40.f);
-//            make.leading.equalTo(_footerView.mas_leading).offset(10.f);
-//            make.trailing.equalTo(_footerView.mas_trailing).offset(-10.f);
-//        }];
     }
     return _footerView;
 }

@@ -35,9 +35,7 @@
         make.edges.equalTo(self.view);
     }];
     
-    
     __weak typeof(self) weakSelf = self;
-
     if([self.urlPath isEqualToString:kUrlGetMoviesTop250]||[self.urlPath isEqualToString:kUrlGetMoviesComing]){
         //添加上拉加载更多
         [self.tableView addInfiniteScrollingWithActionHandler:^{
@@ -48,10 +46,6 @@
     
     //首次加载数据
     [self requestMovieListWithLoadMoreFlag:NO];
-}
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    
 }
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
@@ -88,7 +82,6 @@
     detail.movieName = model.movieName;
     detail.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:detail animated:YES];
-
 }
 
 #pragma mark - Public
@@ -100,7 +93,6 @@
     _noMoreFlag = NO;
 }
 - (void)requestMovieListWithLoadMoreFlag:(BOOL)flag{
-
     //加载更多数据失败后
     if(self.noMoreFlag){
         [self.tableView.infiniteScrollingView stopAnimating];

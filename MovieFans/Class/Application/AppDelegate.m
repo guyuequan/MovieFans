@@ -63,6 +63,8 @@
     self.remindMessage = notification.userInfo[@"reviewRemindMessage"];
     //更新提醒文案
     self.updateMassage = notification.userInfo[@"updateMassage"];
+    //关于文案
+    NSString *about = notification.userInfo[@"aboutText"];
     //其他提醒
     NSString *msg = notification.userInfo[@"otherMssage"];
     //是否显示所有标签(搜索模块）
@@ -71,7 +73,12 @@
     //提醒频率
     self.remindFrequency = [notification.userInfo[@"remindFrequency"] integerValue];
     
-    [[NSUserDefaults standardUserDefaults]setValue:ifshowAllTag forKey:KEY_IF_SHOW_ALL_TAG];
+    if(ifshowAllTag){
+        [[NSUserDefaults standardUserDefaults]setValue:ifshowAllTag forKey:KEY_IF_SHOW_ALL_TAG];
+    }
+    if(about){
+        [[NSUserDefaults standardUserDefaults]setValue:about forKey:KEY_IF_SHOW_ALL_TAG];
+    }
     [[NSUserDefaults standardUserDefaults]synchronize];
     
     //其他提醒
@@ -105,15 +112,11 @@
     NSString *newVersion =[file substringWithRange:range2];
     
     if([kAppVersion floatValue] < [newVersion floatValue]){
-        NSString *msg;
         if(self.updateMassage&&[self.updateMassage length]>1){
-            msg = self.updateMassage;
-        }else{
-            msg = @"新的版本发布了";
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:self.updateMassage delegate:self cancelButtonTitle:@"取消"otherButtonTitles:@"更新",nil];
+            alert.tag = kAlertTagUpdate;
+            [alert show];
         }
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:self cancelButtonTitle:@"取消"otherButtonTitles:@"更新",nil];
-        alert.tag = kAlertTagUpdate;
-        [alert show];
     }
 }
 - (void)showReviewAlert{
@@ -122,15 +125,11 @@
     NSNumber *neverRemind = [[NSUserDefaults standardUserDefaults]valueForKey:kNeveiRemindKey];
     NSInteger freequency = self.remindFrequency?:5;
     if(![neverRemind boolValue]&&([useTimeValue integerValue]%freequency)==2){
-        NSString *msg;
         if(self.remindMessage&&[self.remindMessage length]>1){
-            msg = self.remindMessage;
-        }else{
-            msg = @"如果你喜欢这款应用，请帮忙给个好评吧,谢谢了！！！^_^\n\n(评价后将不再弹出提示框)";
+            UIAlertView *reviewAlert = [[UIAlertView alloc]initWithTitle:@"评价应用" message:self.remindMessage delegate:self cancelButtonTitle:@"以后再说" otherButtonTitles:@"立即评价", nil];
+            reviewAlert.tag = kAlertTagReview;
+            [reviewAlert show];
         }
-        UIAlertView *reviewAlert = [[UIAlertView alloc]initWithTitle:@"评价应用" message:msg delegate:self cancelButtonTitle:@"以后再说" otherButtonTitles:@"立即评价", nil];
-        reviewAlert.tag = kAlertTagReview;
-        [reviewAlert show];
     }
     useTimeValue = [NSNumber numberWithInteger:[useTimeValue integerValue]+1];
     [[NSUserDefaults standardUserDefaults]setValue:useTimeValue forKey:kUseTimeKey];

@@ -22,7 +22,12 @@
     
     self.versionLabel.text = [NSString stringWithFormat:@"V%@",kAppVersion];
     self.aboutTextView.textColor = [ThemeManager themeColorWithKey:THEME_COLOR_LABEL_DARK];
-    self.aboutTextView.text = @"本软件是作者因个人兴趣所作，相关建议或意见可以发送邮件到:develop4ios@163.com进行反馈交流。同时，欢迎到AppStore对此软件进行打分与评价，无论是吐槽还是褒奖都可以啊，只要能看到你的反馈，我就会很开心。。。。。。\n\n感谢支持！！！^_^";
+    NSString *about = [[NSUserDefaults standardUserDefaults]valueForKey:KEY_ABOUT_TEXT];
+    if(about){
+        self.aboutTextView.text = about;
+    }else{
+        self.aboutTextView.text = @"本软件是作者因个人兴趣所作，相关建议或意见可以发送邮件到:develop4ios@163.com进行反馈交流。同时，欢迎到AppStore对此软件进行打分与评价，无论是吐槽还是褒奖都可以啊，只要能看到你的反馈，我就会很开心。。。。。。\n\n感谢支持！！！^_^";
+    }
 }
 
 - (void)applyTheme{

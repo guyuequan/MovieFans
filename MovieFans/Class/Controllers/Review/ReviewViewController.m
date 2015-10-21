@@ -13,8 +13,8 @@
 @interface ReviewViewController ()
 @property (nonatomic,strong) TSegmentedControl *segment;
 @property (nonatomic,assign) NSInteger selectedSegmentIndex;
-@property (nonatomic,strong) ReviewListViewController *reviewList;
-@property (nonatomic,strong) CommentsListViewController *commentList;
+@property (nonatomic,strong) ReviewListViewController *reviewListVC;
+@property (nonatomic,strong) CommentsListViewController *commentListVC;
 
 @end
 
@@ -27,12 +27,13 @@
     self.navigationItem.titleView = self.segment;
     _selectedSegmentIndex = 0;
     
-    [self addChildViewController:self.reviewList];
+    //长评
+    [self addChildViewController:self.reviewListVC];
     
-    [self addChildViewController:self.commentList];
-    self.commentList.view.frame = self.view.bounds;
-    [self.view addSubview:self.commentList.view];
-    
+    //添加短评
+    [self addChildViewController:self.commentListVC];
+    self.commentListVC.view.frame = self.view.bounds;
+    [self.view addSubview:self.commentListVC.view];
     
 }
 
@@ -43,24 +44,23 @@
     if(sender.selectedSegmentIndex == _selectedSegmentIndex){
         return;
     }else{
-        
         switch (sender.selectedSegmentIndex) {
             case 0:
             {
-                [self.view bringSubviewToFront:self.commentList.view];
-                self.commentList.view.hidden = NO;
-                self.reviewList.view.hidden = YES;
+                [self.view bringSubviewToFront:self.commentListVC.view];
+                self.commentListVC.view.hidden = NO;
+                self.reviewListVC.view.hidden = YES;
             }
                 break;
             case 1:
             {
-                if(!self.reviewList.view.superview){
-                    self.reviewList.view.frame = self.view.bounds;
-                    [self.view addSubview:self.reviewList.view];
+                if(!self.reviewListVC.view.superview){
+                    self.reviewListVC.view.frame = self.view.bounds;
+                    [self.view addSubview:self.reviewListVC.view];
                 }
-                [self.view bringSubviewToFront:self.reviewList.view];
-                self.commentList.view.hidden = YES;
-                self.reviewList.view.hidden = NO;
+                [self.view bringSubviewToFront:self.reviewListVC.view];
+                self.reviewListVC.view.hidden = YES;
+                self.reviewListVC.view.hidden = NO;
             }
                 break;
             default:
@@ -69,8 +69,6 @@
         _selectedSegmentIndex = sender.selectedSegmentIndex;
     }
 }
-#pragma mark - Protocol
-
 #pragma mark - Custom Accessors
 
 -(UISegmentedControl *)segment{
@@ -88,19 +86,19 @@
     }
     return _segment;
 }
-- (ReviewListViewController *)reviewList{
-    if(!_reviewList){
-        _reviewList = [[ReviewListViewController alloc]init];
-        _reviewList.movieId = self.movieId;
-        _reviewList.movieName = self.movieName;
+- (ReviewListViewController *)reviewListVC{
+    if(!_reviewListVC){
+        _reviewListVC = [[ReviewListViewController alloc]init];
+        _reviewListVC.movieId = self.movieId;
+        _reviewListVC.movieName = self.movieName;
     }
-    return _reviewList;
+    return _reviewListVC;
 }
-- (CommentsListViewController *)commentList{
-    if(!_commentList){
-        _commentList = [[CommentsListViewController alloc]init];
-        _commentList.movieId = self.movieId;
+- (CommentsListViewController *)commentListVC{
+    if(!_commentListVC){
+        _commentListVC = [[CommentsListViewController alloc]init];
+        _commentListVC.movieId = self.movieId;
     }
-    return _commentList;
+    return _commentListVC;
 }
 @end
