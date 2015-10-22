@@ -40,7 +40,7 @@
 #import "TSegmentedControl.h"
 #import "ThemeManager.h"
 #import "MobClick.h"
-
+#import "MJRefresh.h"
 //豆瓣apikey
 #define kApiKey4Douban @""
 

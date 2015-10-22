@@ -43,7 +43,7 @@
     __weak typeof(self) weakSelf = self;
     //添加上拉加载更多
     [self.tableView addInfiniteScrollingWithActionHandler:^{
-        weakSelf.startNum += weakSelf.pageCount;
+        weakSelf.startNum = [weakSelf.movieModelArray count];
         [weakSelf searchMoviesWithLoadMoreFlag:YES];
      }];
 }

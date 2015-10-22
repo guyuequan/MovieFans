@@ -59,7 +59,7 @@
                     [self.view addSubview:self.reviewListVC.view];
                 }
                 [self.view bringSubviewToFront:self.reviewListVC.view];
-                self.reviewListVC.view.hidden = YES;
+                self.commentListVC.view.hidden = YES;
                 self.reviewListVC.view.hidden = NO;
             }
                 break;

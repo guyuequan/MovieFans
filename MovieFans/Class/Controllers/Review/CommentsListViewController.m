@@ -37,7 +37,7 @@
     //添加上拉加载更多
     __weak typeof(self) weakSelf = self;
     [self.tableView addInfiniteScrollingWithActionHandler:^{
-        weakSelf.startNum += weakSelf.pageCount;
+        weakSelf.startNum = [weakSelf.commentsArray count];
         [weakSelf requestCommentsWithLoadMoreFlag:YES];
     }];
     

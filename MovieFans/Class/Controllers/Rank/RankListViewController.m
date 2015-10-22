@@ -36,16 +36,26 @@
     }];
     
     __weak typeof(self) weakSelf = self;
+    
+    //只有top250和即将上映有更多数据
     if([self.urlPath isEqualToString:kUrlGetMoviesTop250]||[self.urlPath isEqualToString:kUrlGetMoviesComing]){
         //添加上拉加载更多
         [self.tableView addInfiniteScrollingWithActionHandler:^{
-            weakSelf.startNum += weakSelf.pageCount;
-            [weakSelf requestMovieListWithLoadMoreFlag:YES];
-        }];        
+            weakSelf.startNum = [weakSelf.movieModelArray count];
+            [weakSelf requestMovieListUseCache:NO];
+        }];
     }
+    //下拉刷新
+    self.tableView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [weakSelf initData];
+        weakSelf.blankLabel.hidden = YES;
+        [weakSelf.movieModelArray removeAllObjects];
+        [weakSelf.tableView reloadData];
+        [weakSelf requestMovieListUseCache:NO];
+    }];
     
     //首次加载数据
-    [self requestMovieListWithLoadMoreFlag:NO];
+    [self requestMovieListUseCache:YES];
 }
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
@@ -92,7 +102,7 @@
     _startNum = 0;
     _noMoreFlag = NO;
 }
-- (void)requestMovieListWithLoadMoreFlag:(BOOL)flag{
+- (void)requestMovieListUseCache:(BOOL)useCache{
     //加载更多数据失败后
     if(self.noMoreFlag){
         [self.tableView.infiniteScrollingView stopAnimating];
@@ -101,20 +111,21 @@
     }
 
     //首次加载，不是加载更多
-    if(!flag){
+    if(useCache){
         self.movieModelArray = [NSKeyedUnarchiver unarchiveObjectWithFile:self.cachePath];
 
         NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
         formatter.dateFormat = @"_yyyyMMdd";
         NSString *dateString = [formatter stringFromDate:[NSDate date]];
         NSString *cacheString = [[NSUserDefaults standardUserDefaults]valueForKey:[self.urlPath lastPathComponent]];
-        
+
         if([self.movieModelArray count]>0&&[dateString isEqualToString:cacheString]){//有缓存 并且日期为当日
             [self.tableView reloadData];
             return;
         }else{
-            [SVProgressHUD showWithStatus:@""];
-            [self.movieModelArray removeAllObjects];
+            [self.tableView.header beginRefreshing];
+//            [SVProgressHUD showWithStatus:@""];
+//            [self.movieModelArray removeAllObjects];
         }
     }
     
@@ -135,7 +146,7 @@
                     model.wishSee = subjects[i][@"wish"];
                     model.rating = [subjects[i] valueForKey:@"rating"];
                     model.rank = [NSString stringWithFormat:@"%ld",[self.movieModelArray count]+1];
-                    BOOL flag = NO;//是否已包含
+                    BOOL flag = NO;//是否已包含,因为接口请求页面数增加，不是返回空，而是返回重复数据
                     for(MovieSimple *m in self.movieModelArray){
                         if([m.movieID isEqualToString:model.movieID]){
                             flag = YES;
@@ -193,16 +204,10 @@
                     }
                 }
             }
-            //隐藏提示
-            if(!flag){
-                [SVProgressHUD dismiss];
-            }else{
-                [self.tableView.infiniteScrollingView stopAnimating];
-            }
+            [self.tableView.infiniteScrollingView stopAnimating];
             
             //是否加载了更多数据
             if([self.movieModelArray count]==oldCount){
-//                [SVProgressHUD showErrorWithStatus:@"已经没有更多数据啦!" maskType:SVProgressHUDMaskTypeBlack];
                  [self.view.window makeToast:@"已经没有更多数据啦!" duration:2.f position:CSToastPositionBottom];
                 _noMoreFlag = YES;
             }else{
@@ -210,9 +215,11 @@
                 [self cacheData];
             }
         }else{
-            NSLog(@"error:%@",error);
             self.blankLabel.hidden = NO;
-            self.tableView.hidden = YES;
+        }
+        
+        if([self.tableView.header isRefreshing]){
+            [self.tableView.header endRefreshing];
         }
     }];
 }
