@@ -10,11 +10,13 @@
 #import "ReviewCell.h"
 #import "ReviewDetailViewController.h"
 
-@interface ReviewListViewController ()
+@interface ReviewListViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,assign) NSInteger startNum;
 @property (nonatomic,assign) NSInteger pageCount;
 @property (nonatomic,strong) NSMutableArray *reviewsArray;
 @property (nonatomic,assign) BOOL noMoreFlag;
+
+@property (nonatomic,strong) UITableView *tableView;
 @end
 
 @implementation ReviewListViewController
@@ -27,13 +29,13 @@
     _pageCount = 20;
     _noMoreFlag = NO;
     
-    [self.tableView registerClass:[ReviewCell class] forCellReuseIdentifier:@"review_Cell"];
-    self.tableView.tableFooterView = [UIView new];
-    self.tableView.showsVerticalScrollIndicator = NO;
-    self.tableView.backgroundColor = [UIColor clearColor];
-//    if (isPad){
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//    }
+    [self.view addSubview:self.tableView];
+   
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    
+
     //添加上拉加载更多
     __weak typeof(self) weakSelf = self;
     [self.tableView addInfiniteScrollingWithActionHandler:^{
@@ -69,23 +71,21 @@
             if(moreFlag){
                 [self.tableView.infiniteScrollingView stopAnimating];
             }
-            
-            int count = 0;
             if([data isKindOfClass:[NSDictionary class]]){
-                count++;
                 self.startNum = [data[@"next_start"] integerValue];
-                
                 NSArray *reviews = data[@"reviews"];
-                for(int i=0;i<[reviews count];i++){
-                    count++;
-                    Review *review = [MTLJSONAdapter modelOfClass:[Review class] fromJSONDictionary:reviews[i] error:nil];
-                    [self.reviewsArray addObject:review];
-                }
+                
+               [self.reviewsArray addObjectsFromArray:[MTLJSONAdapter modelsOfClass:[Review class] fromJSONArray:reviews error:nil]];
+                
                 //是否加载了更多数据
-                if(count<self.pageCount){
+                if([reviews count]<self.pageCount){
                     _noMoreFlag = YES;
+                    self.blankLabel.hidden = NO;
+                     self.tableView.hidden = YES;
                 }
                 if([self.reviewsArray count]>0){
+                    self.tableView.hidden = NO;
+                    self.blankLabel.hidden = YES;
                     [self.tableView reloadData];
                 }
             }
@@ -127,5 +127,18 @@
         _reviewsArray = [NSMutableArray array];
     }
     return  _reviewsArray;
+}
+- (UITableView *)tableView{
+    if(!_tableView){
+        _tableView = [[UITableView alloc]initWithFrame:CGRectZero];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        [_tableView registerClass:[ReviewCell class] forCellReuseIdentifier:@"review_Cell"];
+        _tableView.tableFooterView = [UIView new];
+        _tableView.showsVerticalScrollIndicator = NO;
+        _tableView.backgroundColor = [UIColor clearColor];
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
+    return _tableView;
 }
 @end

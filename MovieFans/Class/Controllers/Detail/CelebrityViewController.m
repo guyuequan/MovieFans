@@ -22,6 +22,7 @@
 #define kCoverViewWidth 180.f
 #define kPhotosCellHeight 100.f
 #define kAbstractMargin 10.f
+#define kCellMargin 15.f
 #define kAbstractViewShortHeight (isPad?300.f:138.f)
 @interface CelebrityViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,strong) UITableView *contentView;
@@ -152,14 +153,6 @@
     //拼接基本信息字符串
     NSMutableString *mStr = [[NSMutableString alloc]init];
     
-//    [mStr appendFormat:@"英文名:  %@",celebrity.nameEn];
-//    [mStr appendFormat:@"\n别    名:  %@",[celebrity.aka componentsJoinedByString:@","]];
-////    [mStr appendFormat:@"\n性    别:  %@",celebrity.gender];
-//    [mStr appendFormat:@"\n出生地:  %@",celebrity.bornPlace];
-//    [mStr appendFormat:@"\n生    日:  %@",celebrity.birthday];
-//    [mStr appendFormat:@"\n职    业:  "];
-//    [mStr appendFormat:@"%@",[celebrity.professions componentsJoinedByString:@"/"]];
-//    
     if(celebrity.nameEn){
         [mStr appendFormat:@" %@",celebrity.nameEn];
     }
@@ -176,18 +169,6 @@
     if(celebrity.professions){
         [mStr appendFormat:@"\n%@",[celebrity.professions componentsJoinedByString:@"/"]];
     }
-    
-//    NSMutableParagraphStyle * paragraphStyle1 = [[NSMutableParagraphStyle alloc] init];
-//    [paragraphStyle1 setLineSpacing:5.f];
-    
-    
-//    NSAttributedString *attString = [[NSAttributedString alloc] initWithString:mStr
-//                                                                    attributes:@{
-//                                                                                 (id)kCTForegroundColorAttributeName : (id)[UIColor orangeColor].CGColor,
-//                                                                                 NSFontAttributeName : [UIFont italicSystemFontOfSize:14],
-//                                                                                 NSKernAttributeName : [NSNull null],
-//                                                                                 NSParagraphStyleAttributeName:paragraphStyle1,
-//                                                                                 }];
 
     self.basicInfoView.attributedText = [mStr attributedStringWithLineSpacing:6.f];
     self.basicInfoView.textAlignment = NSTextAlignmentCenter;
@@ -198,7 +179,7 @@
     NSMutableAttributedString * attStr = [[NSMutableAttributedString alloc] initWithString:abstract];
     NSMutableParagraphStyle * paragraphStyle2 = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle2 setLineSpacing:5.f];
-    NSDictionary *attDic = @{NSFontAttributeName:[UIFont systemFontOfSize:14.f],NSParagraphStyleAttributeName:paragraphStyle2};
+    NSDictionary *attDic = @{NSFontAttributeName:[UIFont systemFontOfSize:15.f],NSParagraphStyleAttributeName:paragraphStyle2};
     [attStr addAttributes:attDic range:NSMakeRange(0,[attStr length])];
     self.abstractView.attributedText = attStr;
 
@@ -227,9 +208,9 @@
 }
 - (void)moreBtnClicked:(UIButton *)sender{
     SearchResultViewController *searchResultVC = [[SearchResultViewController alloc]init];
-    searchResultVC.pushFlag = YES;
     searchResultVC.title = [NSString stringWithFormat:@"\"%@\"的作品",self.celebrity.name];
-    [searchResultVC loadDataWithTag:@"" question:self.celebrity.name];
+    searchResultVC.question = self.celebrity.name;
+
     [self.navigationController pushViewController:searchResultVC animated:YES];
 }
 #pragma mark - Protocol
@@ -346,19 +327,18 @@
             break;
         case 1:{
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            CGFloat horMargin = 10.f;
             CGFloat horGap = 5.f;
             NSInteger count = 4;
             CGFloat verGap = 5.f;
-            CGFloat w = (kViewWidth-horMargin*2-30.f-(count-1)*horGap)/count;
+            CGFloat w = (kViewWidth-kCellMargin*2-30.f-(count-1)*horGap)/count;
             CGFloat h = kPhotosCellHeight-verGap*2;
             if(isPad){
                 count = 6;
                 cell.accessoryType = UITableViewCellAccessoryNone;
-                w = (kViewWidth-horMargin*2-(count-1)*horGap)/count;
+                w = (kViewWidth-kCellMargin*2-(count-1)*horGap)/count;
             }
             for(int i=0;i<count;i++){
-                UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(horMargin+(w+horGap)*i,verGap,w,h)];
+                UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(kCellMargin+(w+horGap)*i,verGap,w,h)];
                 imgView.contentMode = UIViewContentModeScaleAspectFill;
                 imgView.clipsToBounds = YES;
                 if(i<[self.photos count]){
@@ -441,42 +421,34 @@
     if(!_headerView){
         _headerView = [[UIView alloc]initWithFrame:CGRectMake(0.f, 0.f, kViewWidth,kHeaderViewHeight)];
         //封面
-        if(!_avatarView){
-            _avatarView = [[UIImageView alloc]init];
-            _avatarView.contentMode = UIViewContentModeScaleAspectFill;
-            _avatarView.clipsToBounds = YES;
-        }
+        _avatarView = [[UIImageView alloc]init];
+        _avatarView.contentMode = UIViewContentModeScaleAspectFill;
+        _avatarView.clipsToBounds = YES;
         [_headerView addSubview:self.avatarView];
         
         //基本信息
-        if(!_basicInfoView){
-            _basicInfoView = [[UILabel alloc]initWithFrame:CGRectZero];
-            _basicInfoView.numberOfLines = 0;;
-            _basicInfoView.font = [UIFont italicSystemFontOfSize:14.f];
-            _basicInfoView.lineBreakMode = NSLineBreakByCharWrapping;
-            _basicInfoView.textColor = [UIColor orangeColor];
-        }
+        _basicInfoView = [[UILabel alloc]initWithFrame:CGRectZero];
+        _basicInfoView.numberOfLines = 0;;
+        _basicInfoView.font = [UIFont italicSystemFontOfSize:14.f];
+        _basicInfoView.lineBreakMode = NSLineBreakByCharWrapping;
+        _basicInfoView.textColor = [UIColor orangeColor];
         [_headerView addSubview:self.basicInfoView];
         
         [_headerView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.width.mas_equalTo(kViewWidth);
             make.height.mas_equalTo(kHeaderViewHeight);
         }];
-        
-        CGFloat horGap = 5.f;
-        if (isPad){
-            horGap = 10.f;
-        }
+
         [self.avatarView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.leading.equalTo(_headerView.mas_leading).offset(horGap*2);
-            make.top.equalTo(_headerView.mas_top).offset(horGap);
+            make.leading.equalTo(_headerView.mas_leading).offset(isPad?15:10);
+            make.top.equalTo(_headerView.mas_top).offset(10);
             make.width.mas_equalTo(kCoverViewWidth);
-            make.bottom.mas_equalTo(_headerView.mas_bottom).offset(-horGap);
+            make.bottom.mas_equalTo(_headerView.mas_bottom).offset(-10);
         }];
         [self.basicInfoView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.leading.equalTo(_avatarView.mas_trailing).offset(horGap);
+            make.leading.equalTo(_avatarView.mas_trailing).offset(10);
             make.top.equalTo(_avatarView.mas_top).offset(0.f);
-            make.trailing.equalTo(_headerView.mas_trailing).offset(-horGap);
+            make.trailing.equalTo(_headerView.mas_trailing).offset(-10);
             make.height.equalTo(_avatarView.mas_height);
         }];
     }
@@ -485,9 +457,9 @@
 - (UIView *)footerView{
     if(!_footerView){
         _footerView = [[UIView alloc]initWithFrame:CGRectMake(0.f, 0.f,kViewWidth,100.f)];
-        TButton *moreBtn = [[TButton alloc]initWithFrame:CGRectMake(10.f, 5.f,kViewWidth-20.f,40.f)];
+        TButton *moreBtn = [[TButton alloc]initWithFrame:CGRectMake(kCellMargin, 5.f,kViewWidth-kCellMargin*2,40.f)];
         [moreBtn setTitle:@"更多作品" forState:UIControlStateNormal];
-        moreBtn.themeBackgroundColorKey = THEME_COLOR_MENU_BACKGROUND;
+        moreBtn.themeBackgroundColorKey = THEME_COLOR_CELL_BACKGROUND_DARK;
         moreBtn.themeTextColorNormalKey = THEME_COLOR_BUTTON_TEXT;
         [moreBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
         [moreBtn addTarget:self action:@selector(moreBtnClicked:) forControlEvents:UIControlEventTouchUpInside];

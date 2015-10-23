@@ -9,11 +9,12 @@
 #import "CommentsListViewController.h"
 #import "CommentCell.h"
 
-@interface CommentsListViewController ()
+@interface CommentsListViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,assign) NSInteger startNum;
 @property (nonatomic,assign) NSInteger pageCount;
 @property (nonatomic,assign) BOOL noMoreFlag;
 @property (nonatomic,strong) NSMutableArray *commentsArray;
+@property (nonatomic,strong) UITableView *tableView;
 @end
 
 @implementation CommentsListViewController
@@ -26,13 +27,12 @@
     _pageCount = 20;
     _noMoreFlag = NO;
     
-    [self.tableView registerClass:[CommentCell class] forCellReuseIdentifier:@"comment_cell"];
-    self.tableView.backgroundColor = [UIColor clearColor];
-    self.tableView.tableFooterView = [UIView new];
-    self.tableView.showsVerticalScrollIndicator = NO;
-//    if (isPad){
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//    }
+    [self.view addSubview:self.tableView];
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    
+
     
     //添加上拉加载更多
     __weak typeof(self) weakSelf = self;
@@ -71,22 +71,20 @@
                 [self.tableView.infiniteScrollingView stopAnimating];
             }
             if([data isKindOfClass:[NSDictionary class]]){
-                int count=0;
                 NSArray *comments = data[@"comments"];
-                for(int i=0;i<[comments count];i++){
-                    count++;
-                    Comment *com = [[Comment alloc]init];
-                    com.author = [comments[i] valueForKeyPath:@"author.name"];
-                    com.content = [comments[i] valueForKey:@"content"];
-                    com.rating = [comments[i] valueForKeyPath:@"rating.value"];
-                    com.avatar = [comments[i] valueForKeyPath:@"author.avatar"];
-                    [self.commentsArray addObject:com];
-                }
                 //是否加载了更多数据
-                if(count<self.pageCount){
+                if([comments count]<self.pageCount){
                     _noMoreFlag = YES;
+                    self.blankLabel.hidden = NO;
+                    self.tableView.hidden = YES;
                 }
-                [self.tableView reloadData];
+                [self.commentsArray addObjectsFromArray:[MTLJSONAdapter modelsOfClass:[Comment class] fromJSONArray:comments error:nil]];
+                
+                if([self.commentsArray count]>0){
+                    self.tableView.hidden = NO;
+                    self.blankLabel.hidden = YES;
+                    [self.tableView reloadData];
+                }
             }
         }];
     }
@@ -126,5 +124,18 @@
         _commentsArray = [NSMutableArray array];
     }
     return  _commentsArray;
+}
+- (UITableView *)tableView{
+    if(!_tableView){
+        _tableView = [[UITableView alloc]initWithFrame:CGRectZero];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        [_tableView registerClass:[CommentCell class] forCellReuseIdentifier:@"comment_cell"];
+        _tableView.tableFooterView = [UIView new];
+        _tableView.showsVerticalScrollIndicator = NO;
+        _tableView.backgroundColor = [UIColor clearColor];
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
+    return _tableView;
 }
 @end

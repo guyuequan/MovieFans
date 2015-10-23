@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CommentsListViewController : UITableViewController
+@interface CommentsListViewController : BaseViewController
 @property (nonatomic,copy) NSString *movieId;
 @end

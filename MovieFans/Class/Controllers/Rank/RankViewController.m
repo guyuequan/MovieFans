@@ -87,7 +87,7 @@
 - (void)addMenus{
     CGFloat horMargin = 30.f;
     CGFloat lblWidth;
-    CGFloat originX = 10.f;
+    CGFloat originX = 0.f;
     TLabel *backView = [[TLabel alloc]init];
     backView.themeBackgroundColorKey = THEME_COLOR_MENU_BACKGROUND;
     [self.menuScrollView addSubview:backView];

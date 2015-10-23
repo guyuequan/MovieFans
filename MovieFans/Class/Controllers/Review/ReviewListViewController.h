@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ReviewListViewController : UITableViewController
+@interface ReviewListViewController : BaseViewController
 @property (nonatomic,copy) NSString *movieId;
 @property (nonatomic,copy) NSString *movieName;
 @end

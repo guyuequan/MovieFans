@@ -12,6 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UITextView *aboutTextView;
+@property (weak, nonatomic) IBOutlet UIImageView *IconView;
 @end
 
 @implementation AboutViewController
@@ -19,7 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"关于";
-    
+    self.IconView.layer.cornerRadius = 10.f;
+    self.IconView.layer.masksToBounds = YES;
     self.versionLabel.text = [NSString stringWithFormat:@"V%@",kAppVersion];
     self.aboutTextView.textColor = [ThemeManager themeColorWithKey:THEME_COLOR_LABEL_DARK];
     NSString *about = [[NSUserDefaults standardUserDefaults]valueForKey:KEY_ABOUT_TEXT];

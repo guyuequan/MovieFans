@@ -18,10 +18,8 @@
 #import "Celebrity.h"
 #import "CelebrityViewController.h"
 
-
-#define kHorMargin 5.f
-#define kVerMargin 5.f
 #define kHeaderViewHeight 220.f
+#define kCellMargin 15.f
 #define kCoverViewWidth 150.f
 #define kPhotosCellHeight 100.f
 #define kAbstractViewShortHeight (isPad?300.f:138.f)
@@ -165,11 +163,11 @@
         NSMutableAttributedString * attStr = [[NSMutableAttributedString alloc] initWithString:abstract];
         NSMutableParagraphStyle * paragraphStyle2 = [[NSMutableParagraphStyle alloc] init];
         [paragraphStyle2 setLineSpacing:5.f];
-        NSDictionary *attDic = @{NSFontAttributeName:[UIFont systemFontOfSize:14.f],NSParagraphStyleAttributeName:paragraphStyle2};
+        NSDictionary *attDic = @{NSFontAttributeName:[UIFont systemFontOfSize:15.f],NSParagraphStyleAttributeName:paragraphStyle2};
         [attStr addAttributes:attDic range:NSMakeRange(0,[attStr length])];
         self.abstractView.attributedText = attStr;
         
-        _abstractViewHeight = [attStr.string heightWithAttributes:attDic andSize:CGSizeMake(kViewWidth-20,CGFLOAT_MAX)]+20.f;
+        _abstractViewHeight = [attStr.string heightWithAttributes:attDic andSize:CGSizeMake(kViewWidth-20,CGFLOAT_MAX)]+25.f;
         if([[movie.summary trimWhitespace] length]==0){
             _abstractViewHeight = 1.f;
         }
@@ -332,8 +330,8 @@
         case 0:{
             [cell.contentView addSubview:self.abstractView];
             [self.abstractView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.leading.equalTo(cell.contentView.mas_leading).offset(10);
-                make.trailing.equalTo(cell.contentView.mas_trailing).offset(-10);
+                make.leading.equalTo(cell.contentView.mas_leading).offset(kCellMargin);
+                make.trailing.equalTo(cell.contentView.mas_trailing).offset(-kCellMargin);
                 make.top.equalTo(cell.contentView.mas_top).offset(10.f);
                 make.height.mas_greaterThanOrEqualTo(40.f);
             }];
@@ -347,7 +345,6 @@
                 lbl.textAlignment = NSTextAlignmentCenter;
                 [cell.contentView addSubview:lbl];
                 [lbl mas_makeConstraints:^(MASConstraintMaker *make) {
-//                    make.width.mas_equalTo(80.f);
                     make.height.mas_equalTo(20.f);
                     make.bottom.equalTo(cell.contentView.mas_bottom);
                     make.trailing.equalTo(cell.contentView.mas_trailing);
@@ -360,20 +357,19 @@
             break;
         case 1:{
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            CGFloat horMargin = 10.f;
             CGFloat horGap = 5.f;
             NSInteger count = 4;
             CGFloat verGap = 5.f;
-            CGFloat w = (kViewWidth-horMargin*2-30.f-(count-1)*horGap)/count;
+            CGFloat w = (kViewWidth-kCellMargin*2-30.f-(count-1)*horGap)/count;
             CGFloat h = kPhotosCellHeight-verGap*2;
             if(isPad){
                 count = 6;
                 cell.accessoryType = UITableViewCellAccessoryNone;
-                w = (kViewWidth-horMargin*2-(count-1)*horGap)/count;
+                w = (kViewWidth-kCellMargin*2-(count-1)*horGap)/count;
             }
             
             for(int i=0;i<count;i++){
-                UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(horMargin+(w+horGap)*i,verGap,w,h)];
+                UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(kCellMargin+(w+horGap)*i,verGap,w,h)];
                 imgView.contentMode = UIViewContentModeScaleAspectFill;
                 imgView.clipsToBounds = YES;
                 if(i<[self.moviePhotos count]){
@@ -460,30 +456,12 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
         _headerView = [[UIView alloc]initWithFrame:CGRectMake(0.f, 0.f, kViewWidth,kHeaderViewHeight)];
         _headerView.backgroundColor = [UIColor clearColor];
         //封面
-        if(!_coverView){
-            _coverView = [[UIImageView alloc]init];
-            _coverView.contentMode = UIViewContentModeScaleAspectFit;
-        }
+        _coverView = [[UIImageView alloc]init];
+        _coverView.contentMode = UIViewContentModeScaleAspectFill;
+        _coverView.clipsToBounds = YES;
         [_headerView addSubview:self.coverView];
-        
-        _ratingLbl = [[UILabel alloc]init];
-        _ratingLbl.textColor = [UIColor redColor];
-        _ratingLbl.font = [UIFont italicSystemFontOfSize:25.f];
-        _ratingLbl.textAlignment = NSTextAlignmentLeft;
-        _ratingLbl.layer.cornerRadius = 5.f;
-        _ratingLbl.layer.masksToBounds = YES;
-        [_headerView addSubview:_ratingLbl];
-        
-        //基本信息
-        if(!_basicInfoView){
-            _basicInfoView = [[TTTAttributedLabel alloc]initWithFrame:CGRectZero];
-            _basicInfoView.numberOfLines = 0;
-            _basicInfoView.delegate = self;
-            _basicInfoView.linkAttributes = @{(id)kCTForegroundColorAttributeName : (id)[ThemeManager themeColorWithKey:THEME_COLOR_LABEL_DARK].CGColor,(NSString *)kCTUnderlineStyleAttributeName:[NSNumber numberWithBool:YES]};
-            _basicInfoView.lineBreakMode = NSLineBreakByCharWrapping;
-        }
-        [_headerView addSubview:self.basicInfoView];
-        
+
+        //星星
         _ratingView = [[EDStarRating alloc]init];
         _ratingView.starImage = [[UIImage imageNamed:@"ratingstar"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         _ratingView.starHighlightedImage = [[UIImage imageNamed:@"ratingstar_activated"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
@@ -492,42 +470,57 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
         [_ratingView setNeedsDisplay];
         _ratingView.displayMode=EDStarRatingDisplayHalf;
         [_headerView addSubview:_ratingView];
+
+        //评分
+        _ratingLbl = [[UILabel alloc]init];
+        _ratingLbl.textColor = [UIColor redColor];
+        _ratingLbl.font = [UIFont italicSystemFontOfSize:25.f];
+        _ratingLbl.textAlignment = NSTextAlignmentLeft;
+        _ratingLbl.layer.cornerRadius = 5.f;
+        _ratingLbl.layer.masksToBounds = YES;
+        [_headerView addSubview:_ratingLbl];
         
+        
+        //基本信息
+        _basicInfoView = [[TTTAttributedLabel alloc]initWithFrame:CGRectZero];
+        _basicInfoView.numberOfLines = 0;
+        _basicInfoView.delegate = self;
+        _basicInfoView.linkAttributes = @{(id)kCTForegroundColorAttributeName : (id)[ThemeManager themeColorWithKey:THEME_COLOR_LABEL_DARK].CGColor,(NSString *)kCTUnderlineStyleAttributeName:[NSNumber numberWithBool:YES]};
+        _basicInfoView.lineBreakMode = NSLineBreakByCharWrapping;
+       
+        [_headerView addSubview:self.basicInfoView];
         
         [_headerView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.width.mas_equalTo(kViewWidth);
             make.height.mas_equalTo(kHeaderViewHeight);
         }];
         
-        CGFloat horGap = 5.f;
-        if (isPad){
-            horGap = 10.f;
-        }
+        CGFloat horGap = 10.f;
         [_coverView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.leading.equalTo(_headerView.mas_leading).offset(horGap);
-            make.top.equalTo(_headerView.mas_top).offset(kVerMargin);
+            make.leading.equalTo(_headerView.mas_leading).offset(isPad?15:10);
+            make.top.equalTo(_headerView.mas_top).offset(10);
             make.width.mas_equalTo(kCoverViewWidth);
-            make.bottom.mas_equalTo(_headerView.mas_bottom).offset(-kVerMargin);
+            make.bottom.mas_equalTo(_headerView.mas_bottom).offset(-10);
         }];
     
         [_ratingView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.leading.equalTo(self.coverView.mas_trailing).offset(5.f);
-            make.top.equalTo(self.coverView.mas_top).offset(5.f);
+            make.leading.equalTo(self.coverView.mas_trailing).offset(horGap);
+            make.top.equalTo(self.coverView.mas_top).offset(horGap);
             make.width.mas_equalTo(75.f);
             make.height.mas_equalTo(25.f);
         }];
         
         [_ratingLbl mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.trailing.equalTo(_headerView.mas_trailing).offset(-5.f);
+            make.trailing.equalTo(_headerView.mas_trailing).offset(-horGap);
             make.top.equalTo(_ratingView.mas_top);
-            make.leading.equalTo(_ratingView.mas_trailing).offset(5.f);
+            make.leading.equalTo(_ratingView.mas_trailing).offset(horGap);
             make.height.equalTo(_ratingView.mas_height);
         }];
 
         [_basicInfoView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.leading.equalTo(self.coverView.mas_trailing).offset(5.f);
+            make.leading.equalTo(self.coverView.mas_trailing).offset(horGap);
             make.top.equalTo(self.ratingLbl.mas_bottom).offset(0.f);
-            make.trailing.equalTo(_headerView.mas_trailing).offset(-kHorMargin);
+            make.trailing.equalTo(_headerView.mas_trailing).offset(-horGap);
             make.height.equalTo(self.coverView).offset(-30.f);
         }];
     }
@@ -536,7 +529,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 - (UIView *)footerView{
     if(!_footerView){
         _footerView = [[UIView alloc]initWithFrame:CGRectMake(0.f, 0.f,kViewWidth,100.f)];
-        TButton *moreBtn = [[TButton alloc]initWithFrame:CGRectMake(10.f, 5.f,kViewWidth-20.f,40.f)];
+        TButton *moreBtn = [[TButton alloc]initWithFrame:CGRectMake(kCellMargin, 5.f,kViewWidth-kCellMargin*2,40.f)];
         [moreBtn setTitle:@"浏览更多影评" forState:UIControlStateNormal];
         moreBtn.themeBackgroundColorKey = THEME_COLOR_CELL_BACKGROUND_DARK;
         moreBtn.themeTextColorNormalKey = THEME_COLOR_BUTTON_TEXT;
@@ -550,8 +543,6 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     if(!_abstractView){
         _abstractView = [[UILabel alloc]init];
         _abstractView.numberOfLines = 0;
-        _abstractView.font = [UIFont systemFontOfSize:14.f];
-        _abstractView.backgroundColor = [ThemeManager themeColorWithKey:THEME_COLOR_VIEW_BACKGROUND];
         _abstractView.textColor = [ThemeManager themeColorWithKey:THEME_COLOR_LABEL_DARK];
     }
     return _abstractView;

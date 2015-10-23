@@ -9,7 +9,8 @@
 #import "BaseViewController.h"
 
 @interface SearchResultViewController : BaseViewController
-@property (nonatomic,assign) BOOL pushFlag;
 
-- (void)loadDataWithTag:(NSString *)tag question:(NSString *)question;
+@property (nonatomic,copy) NSString *question;
+@property (nonatomic,copy) NSString *tag;
+
 @end

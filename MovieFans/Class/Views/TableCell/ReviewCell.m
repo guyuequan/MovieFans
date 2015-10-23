@@ -10,7 +10,7 @@
 
 #define kHorMargin 20.f
 #define kVerMargin 8.f
-#define kCellMargin 10.f
+#define kCellMargin 15.f
 @implementation ReviewCell
 
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
@@ -24,25 +24,23 @@
 }
 
 - (void)setupSubViews{
-    
     _titleLabel = [[TLabel alloc]init];
 //    _titleLabel.textColor = [UIColor darkGrayColor];
     _titleLabel.themeTextColorKey = THEME_COLOR_LABEL_DARK;
-    _titleLabel.font = [UIFont systemFontOfSize:15.f];
+    _titleLabel.font = [UIFont systemFontOfSize:18.f];
     _titleLabel.numberOfLines = 0;
     [self.contentView addSubview:_titleLabel];
 
     _abstractLabel = [[TLabel alloc]init];
-//    _abstractLabel.textColor = [UIColor darkGrayColor];
     _abstractLabel.themeTextColorKey = THEME_COLOR_LABEL_LIGHT;
-    _abstractLabel.font = [UIFont systemFontOfSize:14.f];
+    _abstractLabel.font = [UIFont systemFontOfSize:15.f];
     _abstractLabel.numberOfLines = 0;
     _abstractLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     [self.contentView addSubview:_abstractLabel];
     
     [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.contentView.mas_leading).offset(kCellMargin);
-        make.top.equalTo(self.contentView.mas_top);
+        make.top.equalTo(self.contentView.mas_top).offset(10);
         make.trailing.equalTo(self.contentView.mas_trailing).offset(-kCellMargin);
         make.bottom.equalTo(self.abstractLabel.mas_top);
     }];
@@ -52,23 +50,20 @@
         make.leading.equalTo(self.titleLabel.mas_leading);
         make.trailing.equalTo(self.titleLabel.mas_trailing);
         make.height.mas_equalTo(74.f);
-        make.bottom.equalTo(self.contentView.mas_bottom);
+        make.bottom.equalTo(self.contentView.mas_bottom).offset(-10);
     }];
     
     
-    //pad自己写分割线
-//    if (isPad){
-    UILabel *line = [[UILabel alloc]init];
-    line.backgroundColor = [UIColor colorWithHexString:@"0xcccccc"];
+    //分割线
+    TLabel *line = [[TLabel alloc]init];
+    line.themeBackgroundColorKey = THEME_COLOR_MENU_BACKGROUND;
     [self.contentView addSubview:line];
     [line mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.contentView.mas_leading).offset(kCellMargin);
         make.trailing.equalTo(self.contentView.mas_trailing).offset(-kCellMargin);
         make.bottom.equalTo(self.contentView.mas_bottom);
-        make.height.mas_equalTo(0.5f);
+        make.height.mas_equalTo(1);
     }];
-//    }
-
 }
 
 - (void)setReview:(Review *)review{
@@ -84,10 +79,12 @@
         if(!review.content){
             _abstractLabel.text = @"";
         }else{
-            if(review.content.length>251){
-                _abstractLabel.attributedText = [[review.content substringToIndex:250] attributedStringWithLineSpacing:5.f];
+            NSString *tmp = [review.content trimWhitespace];
+            if(tmp.length>251){
+                //不截取的话，会很卡
+                _abstractLabel.attributedText = [[tmp substringToIndex:250] attributedStringWithLineSpacing:5.f];
             }else{
-                _abstractLabel.attributedText = [review.content attributedStringWithLineSpacing:5.f];
+                _abstractLabel.attributedText = [tmp attributedStringWithLineSpacing:5.f];
             }
         }
         
@@ -95,13 +92,13 @@
 }
 + (CGFloat)heightWithTitle:(NSString *)title{
     
-    CGFloat height = 75.f;
+    CGFloat height = 75.f+10+10+10;//内容高度+上下margin+间隙
     
     NSMutableParagraphStyle * paragraphStyle1 = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle1 setLineSpacing:5.f];
     NSDictionary *attDic = @{NSFontAttributeName:[UIFont systemFontOfSize:15.f],NSParagraphStyleAttributeName:paragraphStyle1};
     if(title){
-        height += [title heightWithAttributes:attDic andSize:CGSizeMake(kScreenWidth-kHorMargin*2,CGFLOAT_MAX)]+10.f;
+        height += [title heightWithAttributes:attDic andSize:CGSizeMake(kScreenWidth-kHorMargin*2,CGFLOAT_MAX)];
     }
     return height;
 }

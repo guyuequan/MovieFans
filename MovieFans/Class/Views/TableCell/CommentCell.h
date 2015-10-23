@@ -17,6 +17,7 @@
 @property (nonatomic,strong) TLabel *authorLbl;
 @property (nonatomic,strong) EDStarRating *starRatingView;
 @property (nonatomic,strong) TLabel *commentLbl;
+@property (nonatomic,strong) TButton *usefulBtn;
 
 + (CGFloat)heightWithContent:(NSString *)content;
 @end

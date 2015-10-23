@@ -37,12 +37,14 @@
 #pragma mark - Private
 - (void)setupTableView{
     self.tableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStyleGrouped];
+    if(isPad){
+        self.tableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
+    }
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.backgroundColor = [UIColor clearColor];
-    if(isPad){
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    }
+    self.tableView.tableFooterView = [UIView new];
+
     [self.view addSubview:self.tableView];
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -255,6 +257,7 @@
     cell.themeTitleColorKey = THEME_COLOR_CELL_TITLE;
     cell.themeDetailColorKey = THEME_COLOR_CELL_CONTENT;
     cell.themeBackgroundColorKey = THEME_COLOR_CELL_BACKGROUND_LIGHT;
+    
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -263,7 +266,7 @@
     switch (indexPath.section) {
         case 0:
             if(row == 0){
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:nil message:@"确认清空缓存？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:nil message:@"确认清除图片缓存？\n(收藏夹数据不受影响)" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
                 alert.tag = kClearCacheAlertViewTag;
                 [alert show];
                 [MobClick event:@"UMEVentClearCache"];

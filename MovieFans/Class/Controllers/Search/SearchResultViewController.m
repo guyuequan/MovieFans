@@ -15,9 +15,6 @@
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) NSMutableArray *movieModelArray;
 
-@property (nonatomic,copy) NSString *tag;
-@property (nonatomic,copy) NSString *question;
-
 @property (nonatomic,assign) NSInteger startNum;
 @property (nonatomic,assign) NSInteger pageCount;
 
@@ -31,10 +28,9 @@
 
     _startNum = 0;
     _pageCount = 20;
-    
-    [self.view addSubview:self.tableView];
+    _noMoreFlag = NO;
     self.tableView.userInteractionEnabled = NO;
-    self.tableView.hidden = YES;
+    [self.view addSubview:self.tableView];
     
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -46,34 +42,11 @@
         weakSelf.startNum = [weakSelf.movieModelArray count];
         [weakSelf searchMoviesWithLoadMoreFlag:YES];
      }];
-}
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    if(self.pushFlag&&[self.movieModelArray count]==0){
-        [SVProgressHUD showWithStatus:@""];
-    }
-}
-
-#pragma mark - public
-
-//这样设计是因为最初此VC是作为搜索页的子VC嵌入的。
-- (void)loadDataWithTag:(NSString *)tag question:(NSString *)question{
-    [self.view bringSubviewToFront:self.tableView];
-    self.tableView.userInteractionEnabled = YES;
-    self.tag = tag;
-    self.question = question;
-    [self.movieModelArray removeAllObjects];
-    [self.tableView reloadData];
     
-    //重新搜索时重置noMoreFlag
-    _noMoreFlag = NO;
     [self searchMoviesWithLoadMoreFlag:NO];
 }
-
 #pragma mark - Private
 - (void)searchMoviesWithLoadMoreFlag:(BOOL)moreflag{
-    self.blankLabel.hidden = YES;
-    
     //加载更多数据失败后
     if(self.noMoreFlag){
         [self.tableView.infiniteScrollingView stopAnimating];
@@ -126,7 +99,8 @@
                 _noMoreFlag = YES;
             }
             if([self.movieModelArray count]>0){
-                self.tableView.hidden = NO;
+                self.tableView.userInteractionEnabled = YES;
+                self.blankLabel.hidden = YES;
                 [self.tableView reloadData];
             }else{
                 self.blankLabel.hidden = NO;

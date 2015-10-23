@@ -205,7 +205,7 @@
             [self.tableView.infiniteScrollingView stopAnimating];
             
             //是否加载了更多数据
-            if([self.movieModelArray count]==oldCount){
+            if(!useCache&&[self.movieModelArray count]==oldCount){
                  [self.view.window makeToast:@"已经没有更多数据啦!" duration:2.f position:CSToastPositionBottom];
                 _noMoreFlag = YES;
             }else{

@@ -38,27 +38,36 @@
     [self.blankLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
+    if([self.navigationController.viewControllers count]>1&&[self.navigationController.viewControllers lastObject]==self){
+        UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(popNav:)];
+        self.navigationItem.leftBarButtonItem = backItem;
+    }
+//    UIImageView *backView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"back"]];
+//    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:backView];
     
-    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
-    backItem.title = @"";
-    self.navigationItem.backBarButtonItem = backItem;
-    
+    //    self.navigationItem.backBarButtonItem = backItem;
+//    UIBarButtonItem *backItem = [[UIBarButtonItem alloc]init];
+//    backItem.title = @"";
     [self applyTheme];
 }
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-//    [MobClick beginLogPageView:[NSString stringWithUTF8String:object_getClassName(self)]];
+    [MobClick beginLogPageView:[NSString stringWithUTF8String:object_getClassName(self)]];
 }
 - (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:[NSString stringWithUTF8String:object_getClassName(self)]];
     if([SVProgressHUD isVisible]){
         [SVProgressHUD dismiss];
     }
-//    [MobClick endLogPageView:[NSString stringWithUTF8String:object_getClassName(self)]];
+    [super viewWillDisappear:animated];
 }
 #pragma mark - inherit
 - (void)themeDidChangeNotification:(NSNotification *)notification{
     [self applyTheme];
+}
+#pragma mark - Private
+- (void)popNav:(UIBarButtonItem *)button{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 - (void)applyTheme{
     self.view.backgroundColor = [ThemeManager themeColorWithKey:THEME_COLOR_VIEW_BACKGROUND];

@@ -48,24 +48,23 @@
     _ratingValueLbl.textAlignment = NSTextAlignmentLeft;
     [self.contentView addSubview:_ratingValueLbl];
     
-//    if (isPad){
-    UILabel *line = [[UILabel alloc]init];
-    line.backgroundColor = [UIColor colorWithHexString:@"0xcccccc"];
+    //分割线
+    TLabel *line = [[TLabel alloc]init];
+    line.themeBackgroundColorKey = THEME_COLOR_MENU_BACKGROUND;
     [self.contentView addSubview:line];
     [line mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.contentView.mas_leading).offset(kCellMargin);
         make.trailing.equalTo(self.contentView.mas_trailing).offset(-kCellMargin);
         make.bottom.equalTo(self.contentView.mas_bottom);
-        make.height.mas_equalTo(0.5f);
+        make.height.mas_equalTo(1);
     }];
-//    }
     
     [self setupSubviewsLayout];
 }
 - (void)setupSubviewsLayout{
     
     CGFloat verMargin = 5.f;
-    CGFloat coverWidth = isPad?75.f:60.f;
+    CGFloat coverWidth = isPad?85.f:65.f;
     
     [_coverIV mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.contentView.mas_leading).offset(kCellMargin);
@@ -74,8 +73,8 @@
         make.width.mas_equalTo(coverWidth);
     }];
     [_nameLbl mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.equalTo(self.coverIV.mas_trailing).offset(5.f);
-        make.top.equalTo(self.contentView.mas_top).offset(isPad?10.f:0);
+        make.leading.equalTo(self.coverIV.mas_trailing).offset(8.f);
+        make.top.equalTo(self.contentView.mas_top).offset(isPad?15.f:5.f);
         make.height.mas_equalTo(35.f);
         make.trailing.equalTo(self.contentView.mas_trailing);
     }];
@@ -87,7 +86,7 @@
     }];
     [_yearLbl mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.nameLbl.mas_leading);
-        make.bottom.equalTo(self.contentView.mas_bottom).offset(isPad?-20.f:-verMargin);
+        make.bottom.equalTo(self.contentView.mas_bottom).offset(isPad?-20.f:-10.f);
         make.height.mas_equalTo(20.f);
         make.width.mas_greaterThanOrEqualTo(100.f);
     }];
@@ -136,7 +135,7 @@
 }
 
 + (CGFloat)HeightOfCell{
-    return isPad?110.f:85.f;
+    return isPad?130.f:95.f;
 }
 
 @end

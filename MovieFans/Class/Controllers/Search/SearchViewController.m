@@ -13,7 +13,7 @@
 #import "SearchTagCell.h"
 
 #define kHeaderDescHeight 35.f
-#define kCollectionHorMargin 20.f
+#define kCollectionHorMargin 35.f
 @interface SearchViewController ()<UISearchBarDelegate,UISearchDisplayDelegate,UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate,UICollectionViewDelegateFlowLayout,UICollectionViewDelegate,UICollectionViewDataSource>
 
 @property (nonatomic,strong) NSArray *movieTypes;
@@ -49,6 +49,7 @@
     [super applyTheme];
     [self.searchBar insertBGColor:[ThemeManager themeColorWithKey:THEME_COLOR_NAVIGATION_BAR_BACKGROUND]];
     self.searchBar.barStyle = [ThemeManager shareInstance].themeType == ThemeTypeNight?UIBarStyleBlack:UIBarStyleDefault;
+//    self.view.backgroundColor = [ThemeManager themeColorWithKey:THEME_COLOR_CELL_BACKGROUND_DARK];
     [self.tagCollectionView reloadData];
 }
 #pragma mark - Private
@@ -86,13 +87,14 @@
 - (void)jumpToSearchResultVCWithTag:(NSString *)tag question:(NSString *)question{
     SearchResultViewController *resultVC = [[SearchResultViewController alloc]init];
     resultVC.hidesBottomBarWhenPushed = YES;
-    resultVC.pushFlag = YES;
+
     if(tag){
+        resultVC.tag = tag;
         resultVC.title = [NSString stringWithFormat:@"\"%@\"的检索结果",tag];
     }else if(question){
+        resultVC.question = question;
          resultVC.title = [NSString stringWithFormat:@"\"%@\"的检索结果",question];
     }
-    [resultVC loadDataWithTag:tag question:question];
     [self.navigationController pushViewController:resultVC animated:YES];
 }
 
@@ -165,12 +167,23 @@
     if (kind == UICollectionElementKindSectionHeader){
         UICollectionReusableView *reusableview = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"HeaderView" forIndexPath:indexPath];
         [reusableview.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        
         //定制头部视图的内容
-        TLabel *headerV = [[TLabel alloc]initWithFrame:CGRectMake(kCollectionHorMargin,0.f,collectionView.bounds.size.width-2*kCollectionHorMargin,kHeaderDescHeight)];
+        
+        UIImageView *tagImageView = [[UIImageView alloc]init];
+        tagImageView.tintColor = [UIColor colorWithHexString:@"0xFF575D"];
+        tagImageView.image = [[UIImage imageNamed:@"tag"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        [reusableview addSubview:tagImageView];
+        
+        UILabel *rightLine = [[UILabel alloc]init];
+        rightLine.backgroundColor = [UIColor colorWithHexString:@"0x999999"];
+        [reusableview addSubview:rightLine];
+        
+        TLabel *headerV = [[TLabel alloc]init];
         NSString *desc = @"";
         switch (indexPath.section) {
             case 0:
-                desc = @"按标签";
+                desc = @"按类型";
                 break;
             case 1:
                 desc = @"按区域";
@@ -182,13 +195,29 @@
                 break;
         }
         headerV.text = desc;
-        headerV.font = [UIFont boldSystemFontOfSize:13.f];
+        headerV.font = [UIFont italicSystemFontOfSize:14.f];
         headerV.themeTextColorKey = THEME_COLOR_LABEL_DARK;
         [reusableview addSubview:headerV];
         
-        TLabel *lineView = [[TLabel alloc]initWithFrame:CGRectMake(kCollectionHorMargin, reusableview.bounds.size.height-1.f,reusableview.bounds.size.width-2*kCollectionHorMargin, 1.f)];
-        lineView.themeBackgroundColorKey = THEME_COLOR_LABEL_LIGHT;
-        [reusableview addSubview:lineView];
+        [tagImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(reusableview.mas_centerY);
+            make.leading.equalTo(reusableview.mas_leading).offset(15);
+            make.height.mas_equalTo(20);
+            make.width.mas_equalTo(20);
+        }];
+        
+        [headerV mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(reusableview.mas_centerY);
+            make.leading.equalTo(tagImageView.mas_leading).offset(20);
+            make.height.mas_equalTo(kHeaderDescHeight);
+            make.width.mas_equalTo(50);
+        }];
+        [rightLine mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.leading.equalTo(headerV.mas_trailing);
+            make.centerY.equalTo(headerV.mas_centerY);
+            make.height.mas_equalTo(1);
+            make.trailing.equalTo(reusableview.mas_trailing).offset(-kCollectionHorMargin);
+        }];
         return reusableview;
     
     }
@@ -392,10 +421,12 @@
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc]init];
         flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
         flowLayout.minimumLineSpacing = 20.f;
-        flowLayout.minimumInteritemSpacing = 18.f;
-        flowLayout.sectionInset = UIEdgeInsetsMake(10.f,kCollectionHorMargin,10.f,kCollectionHorMargin);
+        flowLayout.minimumInteritemSpacing = 15.f;
+        flowLayout.sectionInset = UIEdgeInsetsMake(10.f,kCollectionHorMargin,15.f,kCollectionHorMargin);
+        
         _tagCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:flowLayout];
         _tagCollectionView.backgroundColor = [UIColor clearColor];
+        _tagCollectionView.contentInset = UIEdgeInsetsMake(10.f, 0.f, 0.f, 0.f);
         _tagCollectionView.dataSource = self;
         _tagCollectionView.delegate = self;
         _tagCollectionView.showsVerticalScrollIndicator = NO;
