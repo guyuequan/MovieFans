@@ -15,8 +15,8 @@
 #define kCellIdentify @"cell_identify"
 @interface MoviePhotosViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,MWPhotoBrowserDelegate>
 @property (nonatomic,strong) UICollectionView *collectionView;
-@property (nonatomic,strong) NSMutableArray *photos;
-@property (nonatomic,strong) NSMutableArray *photosArray;
+@property (nonatomic,strong) NSMutableArray *photos; //of Photo
+@property (nonatomic,strong) NSMutableArray *photosArray; //of MWPhoto
 
 @property (nonatomic,assign) NSInteger startNum;
 @property (nonatomic,assign) NSInteger pageCount;

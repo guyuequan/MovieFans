@@ -121,12 +121,10 @@
 
         if([self.movieModelArray count]>0&&[dateString isEqualToString:cacheString]){//有缓存 并且日期为当日
             [self.tableView reloadData];
-            return;
         }else{
             [self.tableView.header beginRefreshing];
-//            [SVProgressHUD showWithStatus:@""];
-//            [self.movieModelArray removeAllObjects];
         }
+        return;
     }
     
     NSDictionary *param = @{@"start":[NSNumber numberWithInteger:self.startNum],@"count":[NSNumber numberWithInteger:self.pageCount],@"apikey":kApiKey4Douban};
