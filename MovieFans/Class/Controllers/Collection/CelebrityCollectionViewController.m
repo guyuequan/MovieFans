@@ -33,6 +33,7 @@
         make.edges.equalTo(self.view);
     }];
     
+    [SVProgressHUD showWithStatus:@""];
     [self loadData];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadData) name:NOTICE_COLLECTION_DATA_CHANGED object:nil];
@@ -43,12 +44,10 @@
 }
 #pragma mark - Private
 - (void)loadData{
-    [SVProgressHUD showWithStatus:@""];
     [self.celebrities removeAllObjects];
     [self.collectionView reloadData];
-    self.collectionView.hidden = YES;
     
-    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NSArray *array = [[DBUtil sharedUtil] getAllItemsFromTable:TABLE_CELEBRITY];
         [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             YTKKeyValueItem *item = array[idx];
@@ -57,14 +56,17 @@
                 [self.celebrities addObject:celebirty];
             }
         }];
-        if([self.celebrities count]==0){
-            self.blankLabel.hidden = NO;
-        }else{
-            self.blankLabel.hidden = YES;
-            self.collectionView.hidden = NO;
-            [self.collectionView reloadData];
-        }
-        [SVProgressHUD dismiss];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if([self.celebrities count]==0){
+                self.blankLabel.hidden = NO;
+            }else{
+                self.blankLabel.hidden = YES;
+                [self.collectionView reloadData];
+            }
+            if([SVProgressHUD isVisible]){
+                [SVProgressHUD dismiss];
+            }
+        });
     });
 }
 -(void)longPressToDo:(UILongPressGestureRecognizer *)gesture{
@@ -110,7 +112,7 @@
     [self.navigationController pushViewController:celebrityVC animated:YES];
 }
 #pragma mark CoverCellDelegate
-- (void)CoverCell:(CoverCell *)cell deleteViewTapped:(UITapGestureRecognizer *)tap{
+- (void)coverCell:(CoverCell *)cell deleteViewTapped:(UITapGestureRecognizer *)tap{
     CGPoint point = [tap locationInView:self.collectionView];
     NSIndexPath * indexPath = [self.collectionView indexPathForItemAtPoint:point];
     if(indexPath){

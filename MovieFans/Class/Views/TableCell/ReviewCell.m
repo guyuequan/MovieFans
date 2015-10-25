@@ -35,7 +35,7 @@
     _abstractLabel.themeTextColorKey = THEME_COLOR_LABEL_LIGHT;
     _abstractLabel.font = [UIFont systemFontOfSize:15.f];
     _abstractLabel.numberOfLines = 0;
-    _abstractLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    _abstractLabel.lineBreakMode = NSLineBreakByCharWrapping;
     [self.contentView addSubview:_abstractLabel];
     
     [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -52,7 +52,6 @@
         make.height.mas_equalTo(74.f);
         make.bottom.equalTo(self.contentView.mas_bottom).offset(-10);
     }];
-    
     
     //分割线
     TLabel *line = [[TLabel alloc]init];

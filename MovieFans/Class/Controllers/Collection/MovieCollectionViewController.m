@@ -9,15 +9,15 @@
 #import "MovieCollectionViewController.h"
 #import "Movie.h"
 #import "MovieDetailViewController.h"
-#import "CoverCell.h"
+#import "MovieCoverCell.h"
 
 #define kCellMargin 5.f
 #define kCollectionMargin 15.f
-@interface MovieCollectionViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,CoverCellDelegate>
+@interface MovieCollectionViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,MovieCoverCellDelegate>
 
 @property (nonatomic,strong) NSMutableArray *movies;
 @property (nonatomic,strong) UICollectionView *collectionView;
-
+@property (nonatomic,strong) UICollectionViewFlowLayout *flowLayout;
 @property (nonatomic,assign) BOOL showDeleteFlag;
 @end
 
@@ -32,6 +32,7 @@
         make.edges.equalTo(self.view);
     }];
     
+    [SVProgressHUD showWithStatus:@""];
     [self loadData];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadData) name:NOTICE_COLLECTION_DATA_CHANGED object:nil];
@@ -40,16 +41,30 @@
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    NSInteger columnNum = 4;
+    NSNumber *num = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_COLLECTION_SHOW_MOVIE_NAME];
+    if([num boolValue]){
+        columnNum = 3;
+    }
+    if(isPad){
+        columnNum = 6;
+    }
+    CGFloat itemWidth = (kViewWidth-kCellMargin*(columnNum-1)-kCollectionMargin*2)/columnNum;
+    
+    self.flowLayout.itemSize = CGSizeMake(itemWidth,[num boolValue]?itemWidth*1.6:itemWidth*1.5);
+    [self.collectionView reloadData];
+}
 #pragma mark - Public
 
 #pragma mark - Private
 - (void)loadData{
-    [SVProgressHUD showWithStatus:@""];
     [self.movies removeAllObjects];
     [self.collectionView reloadData];
-    self.collectionView.hidden = YES;
     
-    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NSArray *array = [[DBUtil sharedUtil] getAllItemsFromTable:TABLE_MOVIE];
         [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             YTKKeyValueItem *item = array[idx];
@@ -58,14 +73,17 @@
                 [self.movies addObject:movie];
             }
         }];
-        if([self.movies count]==0){
-            self.blankLabel.hidden = NO;
-        }else{
-            self.blankLabel.hidden = YES;
-            self.collectionView.hidden = NO;
-            [self.collectionView reloadData];
-        }
-        [SVProgressHUD dismiss];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if([self.movies count]==0){
+                self.blankLabel.hidden = NO;
+            }else{
+                self.blankLabel.hidden = YES;
+                [self.collectionView reloadData];
+            }
+            if([SVProgressHUD isVisible]){
+                [SVProgressHUD dismiss];
+            }
+        });
     });
 }
 
@@ -95,10 +113,13 @@
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     
-    CoverCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([self class]) forIndexPath:indexPath];
+    MovieCoverCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([self class]) forIndexPath:indexPath];
     cell.delegate = self;
     Movie *m = self.movies[indexPath.row];
-    [cell setCoverUrlPath:[m.images large] showDelegateFlag:self.showDeleteFlag];
+    
+    NSNumber *num = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_COLLECTION_SHOW_MOVIE_NAME];
+    [cell setCoverUrlPath:[m.images large] title:m.title score:m.rating showDelegateFlag:self.showDeleteFlag showTitleFlag:[num isEqual:@1]];
+    
     return cell;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
@@ -112,7 +133,7 @@
 }
 
 #pragma mark CoverCellDelegate
-- (void)CoverCell:(CoverCell *)cell deleteViewTapped:(UITapGestureRecognizer *)tap{
+- (void)movieCoverCell:(MovieCoverCell *)cell deleteViewTapped:(UITapGestureRecognizer *)tap{
     CGPoint point = [tap locationInView:self.collectionView];
     NSIndexPath * indexPath = [self.collectionView indexPathForItemAtPoint:point];
     if(indexPath){
@@ -135,23 +156,12 @@
 
 - (UICollectionView *)collectionView{
     if(!_collectionView){
-        UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc]init];
-        flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
-        flowLayout.minimumLineSpacing = kCellMargin;
-        flowLayout.minimumInteritemSpacing = kCellMargin;
-        flowLayout.sectionInset = UIEdgeInsetsMake(kCollectionMargin, kCollectionMargin, kCollectionMargin, kCollectionMargin);
-        NSInteger columnNum = 4;
-        if (isPad){
-            columnNum = 6;
-        }
-        CGFloat itemWidth = (kViewWidth-kCellMargin*(columnNum-1)-kCollectionMargin*2)/columnNum;
-        flowLayout.itemSize = CGSizeMake(itemWidth,itemWidth*1.5);
-        _collectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:flowLayout];
+        _collectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.flowLayout];
         _collectionView.backgroundColor = [UIColor clearColor];
         _collectionView.dataSource = self;
         _collectionView.delegate = self;
         _collectionView.showsVerticalScrollIndicator = NO;
-        [_collectionView registerClass:[CoverCell class] forCellWithReuseIdentifier:NSStringFromClass([self class])];
+        [_collectionView registerClass:[MovieCoverCell class] forCellWithReuseIdentifier:NSStringFromClass([self class])];
         
         UILongPressGestureRecognizer * longPressGr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressToDo:)];
         longPressGr.minimumPressDuration = 0.5;
@@ -165,5 +175,21 @@
         _movies = [NSMutableArray array];
     }
     return _movies;
+}
+- (UICollectionViewFlowLayout *)flowLayout{
+    if(!_flowLayout){
+        _flowLayout = [[UICollectionViewFlowLayout alloc]init];
+        _flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
+        _flowLayout.minimumLineSpacing = kCellMargin;
+        _flowLayout.minimumInteritemSpacing = kCellMargin;
+        _flowLayout.sectionInset = UIEdgeInsetsMake(kCollectionMargin, kCollectionMargin, kCollectionMargin, kCollectionMargin);
+        NSInteger columnNum = 4;
+        if (isPad){
+            columnNum = 6;
+        }
+        CGFloat itemWidth = (kViewWidth-kCellMargin*(columnNum-1)-kCollectionMargin*2)/columnNum;
+        _flowLayout.itemSize = CGSizeMake(itemWidth,itemWidth*1.5);
+    }
+    return _flowLayout;
 }
 @end

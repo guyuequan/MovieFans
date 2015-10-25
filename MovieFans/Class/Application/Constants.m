@@ -10,6 +10,7 @@
 NSString *const KEY_CACHE_DATE = @"key_cache_date";
 
 NSString *const KEY_PASTEBOARD_SWITCH = @"key_pasteboard_switch";
+NSString *const KEY_COLLECTION_SHOW_MOVIE_NAME = @"key_collection_show_movie_name";
 
 NSString *const KEY_IF_SHOW_ALL_TAG = @"key_if_show_all_tag";
 NSString *const KEY_ABOUT_TEXT = @"key_about_text";

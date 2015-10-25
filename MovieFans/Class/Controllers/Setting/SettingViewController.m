@@ -63,6 +63,12 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     
 }
+- (void)showMovieNameSwitchChange:(UISwitch *)sender{
+    [MobClick event:@"UMEVentClickAutoHideSwitch"];
+    //保存主题到本地
+    [[NSUserDefaults standardUserDefaults] setObject:sender.on?@1:@0 forKey:KEY_COLLECTION_SHOW_MOVIE_NAME];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 - (void)nightSwitchChange:(UISwitch*)sender{
     [MobClick event:@"UMEVentClickNightSwitch"];
     //取出选中的主题名称
@@ -165,7 +171,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     switch (section) {
         case 0:{
-            return 3;
+            return 4;
         }
             break;
         case 1:{
@@ -198,10 +204,24 @@
         case 0:
             if(row == 0)
             {
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.textLabel.text =  @"清除缓存";
                 cell.detailTextLabel.text = self.tmpSizeString;
                 
             }else if(row==1){
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                cell.textLabel.text =  @"夜间模式";
+                UISwitch *sw=[[UISwitch alloc]init];
+                [sw addTarget:self action:@selector(nightSwitchChange:) forControlEvents:UIControlEventValueChanged];
+                cell.accessoryView=sw;
+                if([ThemeManager shareInstance].themeType==ThemeTypeNight){
+                    [sw setOn:YES];
+                }else{
+                    [sw setOn:NO];
+                }
+
+            }else if (row==2){
+                
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.textLabel.text =  @"点击短评复制到剪切板";
                 UISwitch *sw=[[UISwitch alloc]init];
@@ -213,14 +233,14 @@
                 }else{
                     [sw setOn:NO];
                 }
-
-            }else if (row==2){
+            }else if (row==3){
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text =  @"夜间模式";
+                cell.textLabel.text =  @"收藏夹显示影片名称";
                 UISwitch *sw=[[UISwitch alloc]init];
-                [sw addTarget:self action:@selector(nightSwitchChange:) forControlEvents:UIControlEventValueChanged];
+                [sw addTarget:self action:@selector(showMovieNameSwitchChange:) forControlEvents:UIControlEventValueChanged];
                 cell.accessoryView=sw;
-                if([ThemeManager shareInstance].themeType==ThemeTypeNight){
+                NSNumber *num = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_COLLECTION_SHOW_MOVIE_NAME];
+                if([num isEqual:@1]){
                     [sw setOn:YES];
                 }else{
                     [sw setOn:NO];

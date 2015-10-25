@@ -20,7 +20,7 @@
 
 #define kHeaderViewHeight 220.f
 #define kCellMargin 15.f
-#define kCoverViewWidth 150.f
+#define kCoverViewWidth 140.f
 #define kPhotosCellHeight 100.f
 #define kAbstractViewShortHeight (isPad?300.f:138.f)
 #define kCellNormalIdentify @"cellNormalIdentify"
@@ -100,34 +100,30 @@
 }
 - (void)collectBtnClicekd:(UIButton *)sender{
     [MobClick event:@"UMEVentSaveMovie"];
-    BOOL isSucceed = NO;
+    
     if(self.movieDetail){
-        if(!sender.selected){//收藏
-            NSDictionary *dic = [MTLJSONAdapter JSONDictionaryFromModel:self.movieDetail error:nil];
-            [[DBUtil sharedUtil] putObject:dic withId:self.movieDetail.mId intoTable:TABLE_MOVIE];
-            
-            if([[DBUtil sharedUtil]  getObjectById:self.movieDetail.mId fromTable:TABLE_MOVIE]){
-                [AFMInfoBanner showAndHideWithText:@"收藏成功" style:AFMInfoBannerStyleInfo];
-                sender.selected = !sender.selected;
-                isSucceed = YES;
-            }else{
-                 [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
-            }
-        }else{//取消收藏
-            [[DBUtil sharedUtil]  deleteObjectById:self.movieDetail.mId fromTable:TABLE_MOVIE];
-            if(![[DBUtil sharedUtil]  getObjectById:self.movieDetail.mId fromTable:TABLE_MOVIE]){
-                [AFMInfoBanner showAndHideWithText:@"已取消收藏" style:AFMInfoBannerStyleInfo];
-                sender.selected = !sender.selected;
-                isSucceed = YES;
-            }else{
-                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
-            }
+        sender.selected = !sender.selected;
+        //UI立即响应
+        if(sender.selected){//收藏
+            [AFMInfoBanner showAndHideWithText:@"收藏成功" style:AFMInfoBannerStyleInfo];
+        }else{
+            [AFMInfoBanner showAndHideWithText:@"已取消收藏" style:AFMInfoBannerStyleInfo];
         }
+
+        //后台，数据操作
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE,0), ^{
+            if(sender.selected){//收藏
+                NSDictionary *dic = [MTLJSONAdapter JSONDictionaryFromModel:self.movieDetail error:nil];
+                [[DBUtil sharedUtil] putObject:dic withId:self.movieDetail.mId intoTable:TABLE_MOVIE];
+            }else{//取消收藏
+                [[DBUtil sharedUtil]  deleteObjectById:self.movieDetail.mId fromTable:TABLE_MOVIE];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
+            });
+        });
     }else{
         [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
-    }
-    if(isSucceed){
-        [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
     }
     
 }
@@ -495,7 +491,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
             make.height.mas_equalTo(kHeaderViewHeight);
         }];
         
-        CGFloat horGap = 10.f;
+        CGFloat horGap = 5.f;
         [_coverView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.leading.equalTo(_headerView.mas_leading).offset(isPad?15:10);
             make.top.equalTo(_headerView.mas_top).offset(10);
@@ -519,9 +515,9 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
         [_basicInfoView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.leading.equalTo(self.coverView.mas_trailing).offset(horGap);
-            make.top.equalTo(self.ratingLbl.mas_bottom).offset(0.f);
+            make.top.equalTo(self.ratingLbl.mas_bottom).offset(5);
             make.trailing.equalTo(_headerView.mas_trailing).offset(-horGap);
-            make.height.equalTo(self.coverView).offset(-30.f);
+            make.bottom.equalTo(_headerView.mas_bottom).offset(-5);
         }];
     }
     return _headerView;

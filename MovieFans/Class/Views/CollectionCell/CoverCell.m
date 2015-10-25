@@ -12,7 +12,10 @@
 
 - (instancetype)initWithFrame:(CGRect)frame{
     if(self = [super initWithFrame:frame]){
-        _coverImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0.f, 0.f,frame.size.width,frame.size.height)];
+        CGFloat width = frame.size.width;
+        CGFloat height = frame.size.height;
+        
+        _coverImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0.f, 0.f,width,height)];
         _coverImageView.contentMode = UIViewContentModeScaleAspectFill;
         _coverImageView.clipsToBounds = YES;
         [self.contentView addSubview:_coverImageView];
@@ -26,9 +29,9 @@
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(deleteItem:)];
         [_deleteImageView addGestureRecognizer:tap];
         
-            
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showDeleteView) name:NOTICE_COLLECTION_DATA_BEGIN_EDIT object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(hideDeleteView) name:NOTICE_COLLECTION_DATA_END_EDIT object:nil];
+        
     }
     return self;
 }
@@ -37,26 +40,27 @@
 }
 
 #pragma mark - Public
-- (void)setCoverUrlPath:(NSString *)path showDelegateFlag:(BOOL)show{
-    if(show){
+- (void)setCoverUrlPath:(NSString *)path showDelegateFlag:(BOOL)deleteFlag{
+
+    [_coverImageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:[UIImage imageNamed:@"poster_default"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+    }];
+    if(deleteFlag){
         [self showDeleteView];
     }else{
         [self hideDeleteView];
     }
-    [_coverImageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:[UIImage imageNamed:@"poster_default"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-    }];
 }
-
 #pragma mark - Private
 - (void)deleteItem:(UITapGestureRecognizer *)tap{
-    if([self.delegate respondsToSelector:@selector(CoverCell: deleteViewTapped:)]){
-        [self.delegate CoverCell:self deleteViewTapped:tap];
+    if([self.delegate respondsToSelector:@selector(coverCell: deleteViewTapped:)]){
+        [self.delegate coverCell:self deleteViewTapped:tap];
     }
     [MobClick event:@"UMEVentDeleteCollection"];
 }
 - (void)showDeleteView{
+    CGFloat deleteMargin = 10.f;
     [UIView animateWithDuration:.25 animations:^{
-        _coverImageView.frame = CGRectMake(10.f, 10.f, self.bounds.size.width-20.f,self.bounds.size.height-20.f);
+        _coverImageView.frame = CGRectMake(deleteMargin, deleteMargin, self.bounds.size.width-deleteMargin*2,self.bounds.size.height-deleteMargin*2);
         _deleteImageView.alpha = 1;
     }];
 }

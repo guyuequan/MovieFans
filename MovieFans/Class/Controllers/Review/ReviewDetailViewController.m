@@ -22,6 +22,9 @@
 @property (nonatomic,strong) TLabel *contentLabel;
 @property (nonatomic,strong) TLabel *usefulLabel;
 @property (nonatomic,strong) TLabel *uselessCountLabel;
+
+@property (nonatomic,assign) CGFloat lastOffsetY;
+@property (nonatomic,assign) BOOL isScrolling;
 @end
 
 @implementation ReviewDetailViewController
@@ -32,7 +35,10 @@
     [self setupRightBarItem];
     [self setupSubviews];
 }
-
+- (void)viewDidDisappear:(BOOL)animated{
+    [self showNavigationBar];
+    [super viewDidDisappear:animated];
+}
 #pragma mark - Public
 
 #pragma mark - Private
@@ -48,7 +54,7 @@
     [self.scrollView addSubview:self.usefulLabel];//有用数
     [self.scrollView addSubview:self.uselessCountLabel];//无用数
     
-    CGFloat horMargin = 15.f;
+    CGFloat horMargin = 10.f;
     
     //添加布局约束
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -70,7 +76,7 @@
         make.height.mas_equalTo(20.f);
     }];
     [self.authorLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.equalTo(self.avatorImageView.mas_trailing).offset(10.f);
+        make.leading.equalTo(self.avatorImageView.mas_trailing).offset(5.f);
         make.top.equalTo(self.avatorImageView.mas_top);
         make.width.mas_greaterThanOrEqualTo(10.f);
         make.height.mas_equalTo(20.f);
@@ -83,7 +89,7 @@
         make.height.mas_equalTo(20.f);
     }];
     [self.dateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.trailing.equalTo(self.scrollView.mas_trailing).offset(-10.f);
+        make.trailing.equalTo(self.scrollView.mas_trailing).offset(-horMargin);
         make.top.equalTo(self.avatorImageView.mas_top);
         make.width.mas_equalTo(130.f);
         make.height.mas_equalTo(20.f);
@@ -114,7 +120,9 @@
     [self.avatorImageView sd_setImageWithURL:[NSURL URLWithString:self.review.avatar]];
     self.authorLabel.text = self.review.author;
     if(self.review.content){
-        self.contentLabel.attributedText = [self.review.content attributedStringWithLineSpacing:5.f];
+        NSString *tmp = [self.review.content trimWhitespace];
+//        NSLog(@"%@",tmp);
+        self.contentLabel.attributedText = [tmp attributedStringWithLineSpacing:5.f];
     }
     
     if(self.review.updatedAt){
@@ -144,45 +152,88 @@
     self.navigationItem.rightBarButtonItems = @[faverItem];
 
 }
+//- (void)faverBtnClicekd:(UIButton *)sender{
+//    [MobClick event:@"UMEVentSaveReview"];
+//    BOOL isSucceed = NO;
+//    if(self.review){
+//        if(!sender.selected){//收藏
+//            NSDictionary *dic = [MTLJSONAdapter JSONDictionaryFromModel:self.review error:nil];
+//            [[DBUtil sharedUtil] putObject:dic withId:self.review.rId intoTable:TABLE_REVIEW];
+//            
+//            if([[DBUtil sharedUtil]  getObjectById:self.review.rId fromTable:TABLE_REVIEW]){
+//                [AFMInfoBanner showAndHideWithText:@"收藏成功" style:AFMInfoBannerStyleInfo];
+//                sender.selected = !sender.selected;
+//                isSucceed = YES;
+//            }else{
+//                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
+//            }
+//        }else{//取消收藏
+//            [[DBUtil sharedUtil]  deleteObjectById:self.review.rId fromTable:TABLE_REVIEW];
+//            if(![[DBUtil sharedUtil]  getObjectById:self.review.rId fromTable:TABLE_REVIEW]){
+//                sender.selected = !sender.selected;
+//                [AFMInfoBanner showAndHideWithText:@"已取消收藏" style:AFMInfoBannerStyleInfo];
+//                isSucceed = YES;
+//            }else{
+//                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
+//            }
+//        }
+//    }else{
+//        [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
+//    }
+//    if(isSucceed){
+//        [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
+//    }
+//}
 - (void)faverBtnClicekd:(UIButton *)sender{
-    [MobClick event:@"UMEVentSaveReview"];
-    BOOL isSucceed = NO;
+    [MobClick event:@"UMEVentSaveMovie"];
+    
     if(self.review){
-        if(!sender.selected){//收藏
-            NSDictionary *dic = [MTLJSONAdapter JSONDictionaryFromModel:self.review error:nil];
-            [[DBUtil sharedUtil] putObject:dic withId:self.review.rId intoTable:TABLE_REVIEW];
-            
-            if([[DBUtil sharedUtil]  getObjectById:self.review.rId fromTable:TABLE_REVIEW]){
-                [AFMInfoBanner showAndHideWithText:@"收藏成功" style:AFMInfoBannerStyleInfo];
-                sender.selected = !sender.selected;
-                isSucceed = YES;
-            }else{
-                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
-            }
-        }else{//取消收藏
-            [[DBUtil sharedUtil]  deleteObjectById:self.review.rId fromTable:TABLE_REVIEW];
-            if(![[DBUtil sharedUtil]  getObjectById:self.review.rId fromTable:TABLE_REVIEW]){
-                sender.selected = !sender.selected;
-                [AFMInfoBanner showAndHideWithText:@"已取消收藏" style:AFMInfoBannerStyleInfo];
-                isSucceed = YES;
-            }else{
-                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
-            }
+        //UI立即响应
+        sender.selected = !sender.selected;
+        if(sender.selected){//收藏
+            [AFMInfoBanner showAndHideWithText:@"收藏成功" style:AFMInfoBannerStyleInfo];
+        }else{
+            [AFMInfoBanner showAndHideWithText:@"已取消收藏" style:AFMInfoBannerStyleInfo];
         }
+        
+        //后台，数据操作
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE,0), ^{
+            if(sender.selected){//收藏
+                NSDictionary *dic = [MTLJSONAdapter JSONDictionaryFromModel:self.review error:nil];
+                [[DBUtil sharedUtil] putObject:dic withId:self.review.rId intoTable:TABLE_REVIEW];
+            }else{//取消收藏
+                [[DBUtil sharedUtil]  deleteObjectById:self.review.rId fromTable:TABLE_REVIEW];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
+            });
+        });
     }else{
         [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
     }
-    if(isSucceed){
-        [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
-    }
+    
 }
 - (void)shareBtnClicekd:(UIButton *)sender{
     NSLog(@"shareBtnClicekd");
 
 }
+- (void)hideNavigationBar{
+    self.navigationController.navigationBarHidden = YES;
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
+}
+- (void)showNavigationBar{
+    self.navigationController.navigationBarHidden = NO;
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
 
+}
+- (void)showOrHideNav:(UITapGestureRecognizer *)tap{
+    if(![self.navigationController.navigationBar isHidden]){
+        [self hideNavigationBar];
+    }else{
+        [self showNavigationBar];
+    }
+}
 #pragma mark - Protocol
-
 #pragma mark - Custom Accessors
 - (UIScrollView *)scrollView{
     if(!_scrollView){
@@ -243,6 +294,10 @@
         _contentLabel.font = [UIFont systemFontOfSize:17.f];
         _contentLabel.themeTextColorKey = THEME_COLOR_LABEL_LIGHT;
         _contentLabel.numberOfLines = 0;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showOrHideNav:)];
+        _contentLabel.userInteractionEnabled = YES;
+        _contentLabel.lineBreakMode = NSLineBreakByCharWrapping;
+        [_contentLabel addGestureRecognizer:tap];
     }
     return _contentLabel;
 }

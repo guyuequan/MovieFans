@@ -22,11 +22,11 @@
     [super viewDidLoad];
     
     [self.view addSubview:self.tableView];
-    self.tableView.hidden = YES;
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
   
+    [SVProgressHUD showWithStatus:@""];
     [self loadData];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadData) name:NOTICE_COLLECTION_DATA_CHANGED object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(endEdit) name:NOTICE_COLLECTION_DATA_END_EDIT object:nil];
@@ -36,12 +36,10 @@
 }
 #pragma mark - private
 - (void)loadData{
-    [SVProgressHUD showWithStatus:@""];
     [self.reviewsArray removeAllObjects];
     [self.tableView reloadData];
-    self.tableView.hidden = YES;
     
-    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NSArray *array = [[DBUtil sharedUtil] getAllItemsFromTable:TABLE_REVIEW];
         [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             YTKKeyValueItem *item = array[idx];
@@ -50,14 +48,17 @@
                 [self.reviewsArray addObject:review];
             }
         }];
-        if([_reviewsArray count]==0){
-            self.blankLabel.hidden = NO;
-        }else{
-            self.blankLabel.hidden = YES;
-            self.tableView.hidden = NO;
-            [self.tableView reloadData];
-        }
-        [SVProgressHUD dismiss];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if([_reviewsArray count]==0){
+                self.blankLabel.hidden = NO;
+            }else{
+                self.blankLabel.hidden = YES;
+                [self.tableView reloadData];
+            }
+            if([SVProgressHUD isVisible]){
+                [SVProgressHUD dismiss];
+            }
+        });
     });
 }
 - (void)endEdit{

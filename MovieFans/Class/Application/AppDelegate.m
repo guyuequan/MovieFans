@@ -36,8 +36,6 @@
     [[SDImageCache sharedImageCache] setMaxCacheAge:3600*24*7];
     [[SDImageCache sharedImageCache] setMaxCacheSize:1024*1024*1024];
     
-    [self setupDataBase];
-    
     //网络
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
@@ -47,18 +45,32 @@
     [MobClick setAppVersion:kAppVersion];
     [MobClick setLogEnabled:YES];
     [MobClick updateOnlineConfig];
-    
-//    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND,0), ^{
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onlineConfigCallBack:) name:UMOnlineConfigDidFinishedNotification object:nil];
-//    });
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onlineConfigCallBack:) name:UMOnlineConfigDidFinishedNotification object:nil];
+    [self getUMTestId];
 
+    [self setupDataBase];
     [self customerInterface];
     
     self.window.rootViewController = [[RootTabViewController alloc] init];
     [self.window makeKeyAndVisible];
+    
     return YES;
 }
+- (void)getUMTestId{
+    
+    Class cls = NSClassFromString(@"UMANUtil");
+    SEL deviceIDSelector = @selector(openUDIDString);
+    NSString *deviceID = nil;
+    if(cls && [cls respondsToSelector:deviceIDSelector]){
+        deviceID = [cls performSelector:deviceIDSelector];
+    }
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:@{@"oid" : deviceID}
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:nil];
+    
+    NSLog(@"%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
 
+}
 - (void)onlineConfigCallBack:(NSNotification *)notification {
     
     //评价提醒文案

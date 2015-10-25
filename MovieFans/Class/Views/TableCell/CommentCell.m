@@ -66,13 +66,14 @@
     _commentLbl = [[TLabel alloc]init];
     _commentLbl.numberOfLines = 0;
     _commentLbl.font = kCommentFont;
+    _commentLbl.lineBreakMode = NSLineBreakByCharWrapping;
     _commentLbl.themeTextColorKey = THEME_COLOR_LABEL_LIGHT;
     [self.contentView addSubview:_commentLbl];
     
     _usefulBtn = [[TButton alloc]init];
     [_usefulBtn setImage:[UIImage imageNamed:@"useful"] forState:UIControlStateNormal];
     _usefulBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
-    _usefulBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+    _usefulBtn.titleLabel.font = [UIFont systemFontOfSize:11];
     _usefulBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
     _usefulBtn.themeTextColorNormalKey = THEME_COLOR_LABEL_LIGHT;
     [self.contentView addSubview:_usefulBtn];
@@ -92,8 +93,8 @@
     [_usefulBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(_authorLbl.mas_top).offset(5);
         make.height.equalTo(_authorLbl.mas_height).offset(-5);
-        make.trailing.equalTo(self.contentView.mas_trailing).offset(-kCellMargin);
-        make.width.mas_greaterThanOrEqualTo(90);
+        make.trailing.equalTo(self.contentView.mas_trailing).offset(-5);
+        make.width.mas_greaterThanOrEqualTo(90 );
     }];
     
     [_commentLbl mas_makeConstraints:^(MASConstraintMaker *make) {

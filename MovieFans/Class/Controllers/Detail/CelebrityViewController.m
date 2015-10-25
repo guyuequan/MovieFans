@@ -19,9 +19,8 @@
 
 #define kCellNormalIdentify @"cellNormalIdentify"
 #define kHeaderViewHeight 220.f
-#define kCoverViewWidth 180.f
+#define kCoverViewWidth 170.f
 #define kPhotosCellHeight 100.f
-#define kAbstractMargin 10.f
 #define kCellMargin 15.f
 #define kAbstractViewShortHeight (isPad?300.f:138.f)
 @interface CelebrityViewController ()<UITableViewDataSource,UITableViewDelegate>
@@ -97,36 +96,64 @@
     self.navigationItem.rightBarButtonItems = @[faverItem];
     
 }
+//- (void)collectBtnClicekd:(UIButton *)sender{
+//    [MobClick event:@"UMEVentSaveCelebrity"];
+//    BOOL isSucceed = NO;
+//    if(self.celebrity){
+//        if(!sender.selected){//收藏
+//            NSDictionary *dic = [MTLJSONAdapter JSONDictionaryFromModel:self.celebrity error:nil];
+//            [[DBUtil sharedUtil] putObject:dic withId:self.celebrityId intoTable:TABLE_CELEBRITY];
+//            
+//            if([[DBUtil sharedUtil]  getObjectById:self.celebrityId fromTable:TABLE_CELEBRITY]){
+//                [AFMInfoBanner showAndHideWithText:@"收藏成功" style:AFMInfoBannerStyleInfo];
+//                sender.selected = !sender.selected;
+//                isSucceed = YES;
+//            }else{
+//                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
+//            }
+//        }else{//取消收藏
+//            [[DBUtil sharedUtil]  deleteObjectById:self.celebrityId fromTable:TABLE_CELEBRITY];
+//            if(![[DBUtil sharedUtil]  getObjectById:self.celebrityId fromTable:TABLE_CELEBRITY]){
+//                [AFMInfoBanner showAndHideWithText:@"已取消收藏" style:AFMInfoBannerStyleInfo];
+//                sender.selected = !sender.selected;
+//                isSucceed = YES;
+//            }else{
+//                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
+//            }
+//        }
+//    }else{
+//        [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
+//    }
+//    if(isSucceed){
+//        [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
+//    }
+//}
 - (void)collectBtnClicekd:(UIButton *)sender{
-    [MobClick event:@"UMEVentSaveCelebrity"];
-    BOOL isSucceed = NO;
+    [MobClick event:@"UMEVentSaveMovie"];
+    
     if(self.celebrity){
-        if(!sender.selected){//收藏
-            NSDictionary *dic = [MTLJSONAdapter JSONDictionaryFromModel:self.celebrity error:nil];
-            [[DBUtil sharedUtil] putObject:dic withId:self.celebrityId intoTable:TABLE_CELEBRITY];
-            
-            if([[DBUtil sharedUtil]  getObjectById:self.celebrityId fromTable:TABLE_CELEBRITY]){
-                [AFMInfoBanner showAndHideWithText:@"收藏成功" style:AFMInfoBannerStyleInfo];
-                sender.selected = !sender.selected;
-                isSucceed = YES;
-            }else{
-                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
-            }
-        }else{//取消收藏
-            [[DBUtil sharedUtil]  deleteObjectById:self.celebrityId fromTable:TABLE_CELEBRITY];
-            if(![[DBUtil sharedUtil]  getObjectById:self.celebrityId fromTable:TABLE_CELEBRITY]){
-                [AFMInfoBanner showAndHideWithText:@"已取消收藏" style:AFMInfoBannerStyleInfo];
-                sender.selected = !sender.selected;
-                isSucceed = YES;
-            }else{
-                [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
-            }
+        //UI立即响应
+        sender.selected = !sender.selected;
+        if(sender.selected){//收藏
+            [AFMInfoBanner showAndHideWithText:@"收藏成功" style:AFMInfoBannerStyleInfo];
+        }else{
+            [AFMInfoBanner showAndHideWithText:@"已取消收藏" style:AFMInfoBannerStyleInfo];
         }
+        
+        //后台，数据操作
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE,0), ^{
+            if(sender.selected){//收藏
+                NSDictionary *dic = [MTLJSONAdapter JSONDictionaryFromModel:self.celebrity error:nil];
+                [[DBUtil sharedUtil] putObject:dic withId:self.celebrity.cId intoTable:TABLE_CELEBRITY];
+            }else{//取消收藏
+                [[DBUtil sharedUtil]  deleteObjectById:self.celebrity.cId fromTable:TABLE_CELEBRITY];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
+            });
+        });
     }else{
         [AFMInfoBanner showAndHideWithText:@"收藏失败" style:AFMInfoBannerStyleError];
-    }
-    if(isSucceed){
-        [[NSNotificationCenter defaultCenter]postNotificationName:NOTICE_COLLECTION_DATA_CHANGED object:nil];
     }
 }
 - (void)shareBtnClicekd:(UIButton *)sender{
@@ -183,7 +210,7 @@
     [attStr addAttributes:attDic range:NSMakeRange(0,[attStr length])];
     self.abstractView.attributedText = attStr;
 
-    _abstractViewHeight = [attStr.string heightWithAttributes:attDic andSize:CGSizeMake(kViewWidth-kAbstractMargin*2,CGFLOAT_MAX)]+20.f;
+    _abstractViewHeight = [attStr.string heightWithAttributes:attDic andSize:CGSizeMake(kViewWidth-kCellMargin*2,CGFLOAT_MAX)]+20.f;
     if([[celebrity.summary trimWhitespace] length]==0){
         _abstractViewHeight = 1.f;
     }
@@ -301,8 +328,8 @@
             [cell.contentView addSubview:self.abstractView];
             cell.contentView.clipsToBounds = YES;
             [self.abstractView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.leading.equalTo(cell.contentView.mas_leading).offset(kAbstractMargin);
-                make.trailing.equalTo(cell.contentView.mas_trailing).offset(-kAbstractMargin);
+                make.leading.equalTo(cell.contentView.mas_leading).offset(kCellMargin);
+                make.trailing.equalTo(cell.contentView.mas_trailing).offset(-kCellMargin);
                 make.top.equalTo(cell.contentView.mas_top).offset(5.f);
                 make.height.mas_greaterThanOrEqualTo(40.f);
 //                make.bottom.equalTo(cell.contentView.mas_bottom);
@@ -457,7 +484,7 @@
 - (UIView *)footerView{
     if(!_footerView){
         _footerView = [[UIView alloc]initWithFrame:CGRectMake(0.f, 0.f,kViewWidth,100.f)];
-        TButton *moreBtn = [[TButton alloc]initWithFrame:CGRectMake(kCellMargin, 5.f,kViewWidth-kCellMargin*2,40.f)];
+        TButton *moreBtn = [[TButton alloc]initWithFrame:CGRectMake(10.f, 5.f,kViewWidth-10.f*2,40.f)];
         [moreBtn setTitle:@"更多作品" forState:UIControlStateNormal];
         moreBtn.themeBackgroundColorKey = THEME_COLOR_CELL_BACKGROUND_DARK;
         moreBtn.themeTextColorNormalKey = THEME_COLOR_BUTTON_TEXT;
