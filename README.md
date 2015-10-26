@@ -32,7 +32,7 @@
 ![](ScreenShot/10.png)
 
 
-@HeyRuok（嘿!Are you OK？:）)
+
 
 
 
