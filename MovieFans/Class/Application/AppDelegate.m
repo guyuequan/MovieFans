@@ -100,11 +100,11 @@
         [[[UIAlertView alloc] initWithTitle:@"提醒" message:msg delegate:self cancelButtonTitle:@"知道了"otherButtonTitles:nil] show];
     }
 
-    //异步执行，否则网速慢时阻塞主线程
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE,0), ^{
-        [self checkAppUpdate];
-        [self showReviewAlert];
-    });
+    //有问题
+    // dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE,0), ^{
+    //     [self checkAppUpdate];
+    //     [self showReviewAlert];
+    // });
 }
 
 - (void)customerInterface{
